@@ -1,0 +1,103 @@
+#pragma once
+#include <string>
+#include <memory>
+#include <vector>
+#include "Transform.h"
+#include "Component.h"
+
+namespace dae
+{
+	class Texture2D;
+
+	class GameObject final
+	{
+	public:
+		void Update(float deltaTime);
+		void FixedUpdate(float fixedTime);
+		void LateUpdate(float deltaTime);
+		void Render() const;
+
+		void Destroy();
+		bool GetDeleteFlag();
+		void SetPosition(float x, float y);
+
+		Transform GetTransform() const;
+
+		template<typename componentType>
+		componentType* GetComponent();
+
+		template<typename componentType>
+		bool HasComponent();
+
+		template<typename componentType, typename... Args>
+		componentType* AddComponent(Args&&... args);
+
+		template<typename componentType>
+		bool RemoveComponent();
+
+
+		GameObject() = default;
+		virtual ~GameObject();
+		GameObject(const GameObject& other) = delete;
+		GameObject(GameObject&& other) = delete;
+		GameObject& operator=(const GameObject& other) = delete;
+		GameObject& operator=(GameObject&& other) = delete;
+
+	private:
+		bool m_DeleteFlag{};
+		Transform m_transform{};
+		std::vector<std::unique_ptr<Component>> m_Components;
+	};
+
+	// TODO: use concepts here
+	template<typename componentType>
+	inline componentType* GameObject::GetComponent()
+	{
+		auto itComponent = std::find_if(m_Components.begin(), m_Components.end(), [&](const std::unique_ptr<Component>& a) {
+			auto aConverted = dynamic_cast<componentType*>(a.get());
+			if (aConverted)
+			{
+				return true;
+			}
+			});
+		return (componentType*)((*itComponent).get());
+	}
+
+	template<typename componentType>
+	inline bool GameObject::HasComponent()
+	{
+		auto itComponent = std::find_if(m_Components.begin(), m_Components.end(), [&](const std::unique_ptr<Component>& a) {
+			auto aConverted = dynamic_cast<componentType*>(a.get());
+			if (aConverted)
+			{
+				return true;
+			}
+			return false;
+			});
+		return (!(itComponent == m_Components.end()));
+	}
+
+	template<typename componentType, typename ...Args>
+	inline componentType* GameObject::AddComponent(Args && ...args)
+	{
+		auto pComponent = std::make_unique<componentType>(std::forward<Args>(args)...);
+		((Component*)pComponent.get())->SetOwner(this);
+		m_Components.emplace_back(std::move(pComponent));
+		return (componentType*)(m_Components.back().get());
+	}
+
+	template<typename componentType>
+	inline bool GameObject::RemoveComponent()
+	{
+		auto itComponent = std::find_if(m_Components.begin(), m_Components.end(), [&](const std::unique_ptr<Component>& a) {
+			auto aConverted = dynamic_cast<componentType*>(a.get());
+			if (aConverted)
+			{
+				return true;
+			}
+			return false;
+			});
+		(*itComponent).get()->DeleteComponent();
+		return true;
+	}
+}
