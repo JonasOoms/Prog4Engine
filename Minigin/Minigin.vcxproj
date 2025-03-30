@@ -26,26 +26,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -109,6 +109,9 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -135,6 +138,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
 xcopy "$(SolutionDir)3rdParty\steamworks\sdk\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y
 echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -157,6 +163,9 @@ echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -187,6 +196,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
 xcopy "$(SolutionDir)3rdParty\steamworks\sdk\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y
 echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\imgui-1.90.9\backends\imgui_impl_opengl3.h" />
@@ -198,23 +210,16 @@ echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     <ClInclude Include="..\3rdParty\imgui-1.90.9\imstb_textedit.h" />
     <ClInclude Include="..\3rdParty\imgui-1.90.9\imstb_truetype.h" />
     <ClInclude Include="..\3rdParty\implot-0.16\implot.h" />
-    <ClInclude Include="AchievementObserver.h" />
-    <ClInclude Include="CacheTrasherComponent.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Font.h" />
-    <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="InputMapping.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PlayerController.h" />
-    <ClInclude Include="PlayerControllerCommand.h" />
-    <ClInclude Include="PlayerControllerComponent.h" />
-    <ClInclude Include="PlayerControllerMoveCommand.h" />
-    <ClInclude Include="QuitCommand.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -225,9 +230,6 @@ echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     <ClInclude Include="TextRenderComponent.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="ValueComponent.h" />
-    <ClInclude Include="ValueIncreaseCommand.h" />
-    <ClInclude Include="ValueDisplayComponent.h" />
     <ClInclude Include="Xinput.h" />
   </ItemGroup>
   <ItemGroup>
@@ -240,23 +242,15 @@ echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     <ClCompile Include="..\3rdParty\imgui-1.90.9\imgui_widgets.cpp" />
     <ClCompile Include="..\3rdParty\implot-0.16\implot.cpp" />
     <ClCompile Include="..\3rdParty\implot-0.16\implot_items.cpp" />
-    <ClCompile Include="AchievementObserver.cpp" />
-    <ClCompile Include="CacheTrasherComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Font.cpp" />
-    <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="InputMapping.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="PlayerController.cpp" />
-    <ClCompile Include="PlayerControllerCommand.cpp" />
-    <ClCompile Include="PlayerControllerComponent.cpp" />
-    <ClCompile Include="PlayerControllerMoveCommand.cpp" />
-    <ClCompile Include="QuitCommand.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -266,8 +260,6 @@ echo 480 &gt; "$(OutputPath)steam_appid.txt"</Command>
     <ClCompile Include="TextRenderComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="ValueIncreaseCommand.cpp" />
-    <ClCompile Include="ValueDisplayComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="steam_appid.txt" />
