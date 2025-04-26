@@ -5,9 +5,9 @@ class ServiceLocator final
 {
 	static std::unique_ptr<SoundSystem> m_pSoundSystem_Instance;
 public:
-	static SoundSystem& GetSoundSystem()
+	static SoundSystem* GetSoundSystem()
 	{
-		return *m_pSoundSystem_Instance;
+		return m_pSoundSystem_Instance.get();
 	}
 	static void RegisterSoundSystem(std::unique_ptr<SoundSystem>&& pSoundSystem)
 	{

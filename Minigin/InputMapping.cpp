@@ -40,7 +40,6 @@ void InputMapping::PollInputMapping(unsigned short buttons, unsigned short butto
 
 void InputMapping::PollInputMapping(const SDL_Event& event)
 {
-	int pressed = 0;
 	const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
 	for (const auto& binding : m_InputBindings)
 	{
@@ -50,7 +49,6 @@ void InputMapping::PollInputMapping(const SDL_Event& event)
 			if (keyboardState[binding.button])
 			{
 				binding.command->Execute();
-				++pressed;
 			}
 			break;
 		case TriggerType::Down:
@@ -73,7 +71,5 @@ void InputMapping::PollInputMapping(const SDL_Event& event)
 			break;
 		}
 	}
-
-	std::cout << pressed << std::endl;
 }
 

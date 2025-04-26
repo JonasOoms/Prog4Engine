@@ -1,6 +1,8 @@
 #pragma once 
 #include "ValueComponent.h"
 #include "Command.h"
+#include "ServiceLocator.h"
+#include "SoundSystem.h"
 
 template<typename T>
 class ValueIncreaseCommand : public Command
@@ -25,4 +27,6 @@ template <typename T>
 inline void ValueIncreaseCommand<T>::Execute()
 {
 	m_ValueComponent->Increment(m_increaseAmount);
+	auto soundSystem = ServiceLocator::GetSoundSystem();
+	soundSystem->Play(1, 1.0f);
 }

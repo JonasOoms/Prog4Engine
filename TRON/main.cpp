@@ -27,11 +27,10 @@
 #include <Windows.h>
 #include "Xinput.h"
 #include "ServiceLocator.h"
+#include "SDL_SoundSystem.h"
 
-void load()
+void LoadDemoScene(dae::Scene& scene)
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
-
 	auto go = std::make_shared<dae::GameObject>();
 	go->AddComponent<RenderComponent>()->SetTexture("Background.tga");
 	scene.Add(go);
@@ -138,6 +137,22 @@ void load()
 	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_B, TriggerType::Released, new ValueIncreaseCommand<int>(100, keyboardCharacterPoints));
 
 	dae::InputManager::GetInstance().GetPlayerController(0)->AddMapping(inputMappingGamepad);
+}
+
+void load()
+{
+
+	ServiceLocator::RegisterSoundSystem(std::make_unique<SDL_SoundSystem>());
+
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
+	LoadDemoScene(scene);
+
+	auto soundSystem = ServiceLocator::GetSoundSystem();
+	sound_id sound1 = soundSystem->RegisterAudio("../Data/Sounds/S_Intro.wav");
+	soundSystem->RegisterAudio("../Data/Sounds/S_SFX1.wav");
+	
+	soundSystem->Play(sound1, 128.f);
+	
 
 }
 

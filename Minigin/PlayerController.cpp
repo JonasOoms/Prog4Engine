@@ -103,9 +103,9 @@ private:
 PlayerController::PlayerController(int id, bool isKeyboard):
 	m_pImpl{ std::make_unique<impl>(this, isKeyboard, id) }
 {
-
-	std::cout << "PlayerController created with id " << id << std::endl;
-
+#ifdef _DEBUG
+	std::cout << "[FACE] PlayerController created with id " << id << std::endl;
+#endif
 	m_pImpl->Verify();
 }
 
