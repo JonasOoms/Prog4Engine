@@ -1,9 +1,11 @@
 #pragma once
 #include <any>
 
+using event_type = unsigned int;
+
 namespace EventType
 {
-	inline unsigned int sdbm_hash(const char* str) {
+	inline constexpr unsigned int sdbm_hash(const char* str) {
 		unsigned int hash = 0;
 		int c;
 		while ((c = *str++)) {
@@ -11,11 +13,18 @@ namespace EventType
 		}
 		return hash;
 	}
+
+
+}
+
+namespace EngineEvents
+{
+	constexpr event_type EVENT_VALUE_CHANGED = EventType::sdbm_hash("EVENT_VALUE_CHANGED");
 }
 
 struct Event
 {
-	unsigned int eventType;
+	event_type eventType;
 	std::any eventContext;
 };
 

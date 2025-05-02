@@ -51,7 +51,7 @@ inline void ValueComponent<T>::SendEvent(T value)
 {
 	Event valueChangedEvent;
 	EventContext::ValueChangedEventContext<T> valueChangedContext{ value };
-	valueChangedEvent.eventType = EventType::sdbm_hash("VALUE_CHANGED_EVENT");
+	valueChangedEvent.eventType = EngineEvents::EVENT_VALUE_CHANGED;
 	valueChangedEvent.eventContext = valueChangedContext;
 	m_ValueChangedEvent->NotifyObservers(valueChangedEvent);
 }

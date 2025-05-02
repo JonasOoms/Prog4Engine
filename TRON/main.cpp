@@ -13,7 +13,7 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "RenderComponent.h"
+#include "TankRendererComponent.h"
 #include "TextRenderComponent.h"
 #include "FPSComponent.h"
 #include "PlayerControllerComponent.h"
@@ -65,8 +65,9 @@ void LoadDemoScene(dae::Scene& scene)
 
 
 	auto keyboardCharacterObject = std::make_shared<dae::GameObject>();
-	keyboardCharacterObject->AddComponent<RenderComponent>()->SetTexture("blueTank.png");
+	auto playerTankRendererComponent = keyboardCharacterObject->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png",  45.f,45.f);
 	auto playerControllerComponentKeyboard = keyboardCharacterObject->AddComponent<PlayerControllerComponent>(30.f);
+	playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
 
 	auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
 	auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);
@@ -74,7 +75,7 @@ void LoadDemoScene(dae::Scene& scene)
 	scene.Add(keyboardCharacterObject);
 
 	auto gamepadCharacterObject = std::make_shared<dae::GameObject>();
-	gamepadCharacterObject->AddComponent<RenderComponent>()->SetTexture("redTank.png");
+	gamepadCharacterObject->AddComponent<RenderComponent>()->SetTexture("Textures/T_EnemyTank.png");
 	auto gamepadCharacterLives = gamepadCharacterObject->AddComponent<ValueComponent<int>>(3);
 	auto gamepadCharacterPoints = gamepadCharacterObject->AddComponent<ValueComponent<int>>(0);
 	auto playerControllerComponentGamepad = gamepadCharacterObject->AddComponent<PlayerControllerComponent>(30.f);

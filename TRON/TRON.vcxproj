@@ -157,15 +157,20 @@
     <ClCompile Include="PlayerControllerCommand.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
+    <ClCompile Include="TankRendererComponent.cpp" />
     <ClCompile Include="ValueDisplayComponent.cpp" />
     <ClCompile Include="ValueIncreaseCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h" />
     <ClInclude Include="FPSComponent.h" />
+    <ClInclude Include="GameEnums.h" />
+    <ClInclude Include="GameEvents.h" />
+    <ClInclude Include="GameUtils.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
+    <ClInclude Include="TankRendererComponent.h" />
     <ClInclude Include="ValueComponent.h" />
     <ClInclude Include="ValueDisplayComponent.h" />
     <ClInclude Include="ValueIncreaseCommand.h" />

@@ -12,7 +12,7 @@ ValueDisplayComponent::ValueDisplayComponent(const std::string& prefix, const st
 void ValueDisplayComponent::Notify(const Event& event, EventDispatcher* subject)
 {
 	subject;
-	if (event.eventType == EventType::sdbm_hash("VALUE_CHANGED_EVENT"))
+	if (event.eventType == EngineEvents::EVENT_VALUE_CHANGED)
 	{
 		EventContext::ValueChangedEventContext<int> context = std::any_cast<EventContext::ValueChangedEventContext<int>>(event.eventContext);
 		SetText(m_Prefix + std::to_string(context.newValue) + m_Suffix);
