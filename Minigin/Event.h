@@ -1,5 +1,6 @@
 #pragma once
 #include <any>
+#include "Transform.h"
 
 using event_type = unsigned int;
 
@@ -20,6 +21,7 @@ namespace EventType
 namespace EngineEvents
 {
 	constexpr event_type EVENT_VALUE_CHANGED = EventType::sdbm_hash("EVENT_VALUE_CHANGED");
+	constexpr event_type EVENT_GAMEOBJECT_TRANSFORMCHANGED = EventType::sdbm_hash("EVENT_GAMEOBJECT_TRANSFORMCHANGED");
 }
 
 struct Event
@@ -34,5 +36,12 @@ namespace EventContext
 	struct ValueChangedEventContext
 	{
 		T newValue;
+	};
+
+	struct GameObjectTransformChangedEventContext
+	{
+		dae::GameObject* gameObject;
+		dae::Transform oldTransform;
+		dae::Transform newTransform;
 	};
 }

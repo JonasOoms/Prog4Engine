@@ -13,7 +13,7 @@ private:
 	float m_Width{};
 	float m_Height{};
 
-	float m_Angle{};
+	float m_Angle{0};
 
 };
 

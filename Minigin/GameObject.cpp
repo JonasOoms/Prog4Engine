@@ -3,6 +3,12 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "RenderComponent.h"
+#include "Event.h"
+
+dae::GameObject::GameObject():
+	m_transform{this},
+	m_pGameObjectEventDispatcher{ std::make_unique<EventDispatcher>() }
+{}
 
 dae::GameObject::~GameObject() = default;
 
@@ -50,6 +56,54 @@ void dae::GameObject::Render() const
 	}
 }
 
+bool dae::GameObject::IsParentOf(GameObject* object)
+{
+	for (GameObject* child : m_Children)
+	{
+		if (child == object or child->IsParentOf(object))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
+{
+	bool isValid{ !this->IsParentOf(parent) || !(parent == this) || !(m_Parent == parent)};
+	assert(isValid);
+	if (isValid)
+	{
+		if (parent == nullptr)
+			m_transform.SetLocalPosition(m_transform.GetWorldPosition());
+		else
+		{
+			if (keepWorldPosition)
+				m_transform.SetLocalPosition(m_transform.GetWorldPosition() - parent->GetTransform().GetWorldPosition());
+		}
+		if (m_Parent)
+		{
+			m_Parent->RemoveChild(this);
+		}
+		m_Parent = parent;
+		if (m_Parent)
+		{
+			m_Parent->AddChild(this);
+		}
+	}
+}
+
+void dae::GameObject::RemoveChild(GameObject* object)
+{
+	
+	std::erase(m_Children, object);
+}
+
+void dae::GameObject::AddChild(GameObject* object)
+{
+	m_Children.emplace_back(object);
+}
+
 void dae::GameObject::Destroy()
 {
 	m_DeleteFlag = true;
@@ -63,10 +117,17 @@ bool dae::GameObject::GetDeleteFlag()
 
 void dae::GameObject::SetPosition(float x, float y)
 {
+	Transform oldTransform = GetTransform();
 	m_transform.SetPosition(x, y, 0.0f);
+	for (GameObject* child : m_Children)
+	{
+		child->GetTransform().SetIsDirty();
+	}
+	Event event{ EngineEvents::EVENT_GAMEOBJECT_TRANSFORMCHANGED, EventContext::GameObjectTransformChangedEventContext{this, oldTransform, GetTransform()}};
+	m_pGameObjectEventDispatcher->NotifyObservers(event);
 }
 
-dae::Transform dae::GameObject::GetTransform() const
+dae::Transform& dae::GameObject::GetTransform()
 {
 	return m_transform;
 }

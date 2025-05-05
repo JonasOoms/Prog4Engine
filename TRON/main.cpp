@@ -1,4 +1,3 @@
-#include <SDL.h>
 
 #if _DEBUG
 // ReSharper disable once CppUnusedIncludeDirective
@@ -28,6 +27,9 @@
 #include "Xinput.h"
 #include "ServiceLocator.h"
 #include "SDL_SoundSystem.h"
+#include "TurretComponent.h"
+#include "StaticPhysicsComponent.h"
+#include "SimpleSpatialPhysicsSystem.h"
 
 void LoadDemoScene(dae::Scene& scene)
 {
@@ -64,15 +66,35 @@ void LoadDemoScene(dae::Scene& scene)
 	scene.Add(go);
 
 
+
+
 	auto keyboardCharacterObject = std::make_shared<dae::GameObject>();
 	auto playerTankRendererComponent = keyboardCharacterObject->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png",  45.f,45.f);
-	auto playerControllerComponentKeyboard = keyboardCharacterObject->AddComponent<PlayerControllerComponent>(30.f);
+	keyboardCharacterObject->AddComponent<PhysicsComponent>(glm::vec2{ 45.f, 45.f });
+	auto playerControllerComponentKeyboard = keyboardCharacterObject->AddComponent<PlayerControllerComponent>(200.f);
 	playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
+
+	auto testCollisionObject = std::make_shared<dae::GameObject>();
+	testCollisionObject->SetPosition(200, 80);
+	testCollisionObject->AddComponent<StaticPhysicsComponent>(glm::vec2{ 40.f, 40.0f });
+	testCollisionObject->AddComponent<RenderComponent>()->SetTexture("Textures/T_Turret.png");
+	scene.Add(testCollisionObject);
+	
+	/*testCollisionObject = std::make_shared<dae::GameObject>();
+	testCollisionObject->SetPosition(80+45, 80);
+	testCollisionObject->AddComponent<StaticPhysicsComponent>(glm::vec2{ 45.f, 45.f }, glm::vec2{ -22.5f, -22.5f });
+	scene.Add(testCollisionObject);*/
 
 	auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
 	auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);
 	keyboardCharacterObject->SetPosition(100, 100);
 	scene.Add(keyboardCharacterObject);
+
+	auto playerTankTurretObject = std::make_shared<dae::GameObject>();
+	playerTankTurretObject->AddComponent<TurretComponent>("Textures/T_Turret.png", 60.f, 60.f);
+	playerTankTurretObject->SetParent(keyboardCharacterObject.get(), false);
+	playerTankTurretObject->SetPosition(-5, -5);
+	scene.Add(playerTankTurretObject);
 
 	auto gamepadCharacterObject = std::make_shared<dae::GameObject>();
 	gamepadCharacterObject->AddComponent<RenderComponent>()->SetTexture("Textures/T_EnemyTank.png");
@@ -144,6 +166,7 @@ void load()
 {
 
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SDL_SoundSystem>());
+	ServiceLocator::RegisterPhysicsSystem(std::make_unique<SimpleSpatialPhysicsSystem>((float) dae::Minigin::windowWidth, (float) dae::Minigin::windowHeight));
 
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
 	LoadDemoScene(scene);
@@ -154,13 +177,11 @@ void load()
 	
 	soundSystem->Play(sound1, 128.f);
 	
-
 }
 
 int main(int, char* []) {
 	dae::Minigin engine("../Data/");
 	engine.Run(load);
-
 	// enable for steam support
 	//SteamAPI_Shutdown();
 	return 0;

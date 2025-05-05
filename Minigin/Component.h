@@ -22,6 +22,8 @@ public:
 	virtual void FixedUpdate(float) {};
 	virtual void LateUpdate(float) {};
 
+	virtual void ComponentOwnerInitialized() {};
+
 	// TODO: Dangerous! Make private then friend class the gameobject
 	dae::GameObject* GetOwner() const;
 

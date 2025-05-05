@@ -13,7 +13,7 @@ void RenderComponent::Render()
 {
 	if (m_pTexture)
 	{
-		const auto& position = GetOwner()->GetTransform().GetPosition();
+		const auto& position = GetOwner()->GetTransform().GetWorldPosition();
 		dae::Renderer::GetInstance().RenderTexture(*m_pTexture, position.x, position.y);
 	}
 }

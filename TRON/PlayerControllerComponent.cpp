@@ -12,7 +12,7 @@ void PlayerControllerComponent::Update(float elapsedSec)
 {
 	if (m_IsDirty)
 	{
-		auto originalPos = GetOwner()->GetTransform().GetPosition();
+		auto originalPos = GetOwner()->GetTransform().GetWorldPosition();
 		auto normalizedMovement = glm::normalize(m_MovementInput);
 		
 		if (std::isnan(normalizedMovement.x) || std::isnan(normalizedMovement.y))

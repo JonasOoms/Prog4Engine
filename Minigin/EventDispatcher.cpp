@@ -13,8 +13,7 @@ void EventDispatcher::AddObserver(Observer* observer)
 
 void EventDispatcher::RemoveObserver(Observer* observer)
 {
-	std::erase(m_Observers, observer);
-	
+		std::erase(m_Observers, observer);
 }
 
 void EventDispatcher::NotifyObservers(const Event& event)

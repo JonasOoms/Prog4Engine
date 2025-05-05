@@ -1,4 +1,5 @@
 #pragma once
+#include <SDL.h>
 #include <string>
 #include <functional>
 
@@ -20,7 +21,10 @@ namespace dae
 		const float fixed_time_step{ 0.166667f };
 		const long ms_per_frame{ 16 };
 		
-		
+		const static int windowWidth{ 640 };
+		const static int windowHeight{ 480 };
+
+		static SDL_Window* g_window;
 		static bool doContinue;
 	private:
 	};

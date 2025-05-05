@@ -16,7 +16,7 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 
-SDL_Window* g_window{};
+SDL_Window* dae::Minigin::g_window = nullptr;
 
 bool dae::Minigin::doContinue = true;
 
@@ -61,8 +61,8 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		windowWidth,
+		windowHeight,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 

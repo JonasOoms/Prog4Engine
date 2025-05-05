@@ -12,6 +12,7 @@ namespace dae
 	class GameObject final
 	{
 	public:
+
 		void Update(float deltaTime);
 		void FixedUpdate(float fixedTime);
 		void LateUpdate(float deltaTime);
@@ -21,7 +22,7 @@ namespace dae
 		bool GetDeleteFlag();
 		void SetPosition(float x, float y);
 
-		Transform GetTransform() const;
+		Transform& GetTransform();
 
 		template<typename componentType>
 		componentType* GetComponent();
@@ -35,8 +36,17 @@ namespace dae
 		template<typename componentType>
 		bool RemoveComponent();
 
+		bool IsParentOf(GameObject* object);
+		void SetParent(GameObject* parent, bool keepWorldPosition);
 
-		GameObject() = default;
+		GameObject* GetParent() { return m_Parent; }
+
+		EventDispatcher* GetGameObjectEventDispatcher() const
+		{
+			return m_pGameObjectEventDispatcher.get();
+		}
+
+		GameObject();
 		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -44,9 +54,17 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
+		// If nullptr, is scene root
+		GameObject* m_Parent{};
+		std::vector<GameObject*> m_Children;
+
 		bool m_DeleteFlag{};
-		Transform m_transform{};
+		Transform m_transform;
 		std::vector<std::unique_ptr<Component>> m_Components;
+		std::unique_ptr<EventDispatcher> m_pGameObjectEventDispatcher;
+		
+		void RemoveChild(GameObject* object);
+		void AddChild(GameObject* object);
 	};
 
 	// TODO: use concepts here
@@ -59,6 +77,7 @@ namespace dae
 			{
 				return true;
 			}
+			return false;
 			});
 		return (componentType*)((*itComponent).get());
 	}

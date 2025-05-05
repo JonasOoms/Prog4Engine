@@ -20,9 +20,9 @@ void TankRendererComponent::Render()
 	SDL_Rect srcRect{static_cast<int>(frameSize*static_cast<int>(m_Direction)), 0, static_cast<int>(frameSize), texSize.y};
 
 
-	glm::vec2 pos = GetOwner()->GetTransform().GetPosition();
+	glm::vec2 pos = GetOwner()->GetTransform().GetWorldPosition();
 
-	dae::Renderer::GetInstance().RenderTexture(*texture, pos.x, pos.y, m_width, m_height, &srcRect);
+	dae::Renderer::GetInstance().RenderTexture(*texture, pos.x, pos.y, m_width, m_height, &srcRect, 0.f);
 }
 
 void TankRendererComponent::Update(float)
