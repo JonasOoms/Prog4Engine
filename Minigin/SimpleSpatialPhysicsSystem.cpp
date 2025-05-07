@@ -158,7 +158,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 		{
 			PhysicsComponent* pNeighbor = m_pCellSpace->GetNeighbors()[neighborIndex];
 			if (pNeighbor == agent) continue;
-			if (pNeighbor->HasCollided) continue;
+			//if (pNeighbor->HasCollided) continue;
 
 			if (Engine::CheckAABBCollision(agent->GetBoundingBox(), pNeighbor->GetBoundingBox()))
 			{
@@ -193,20 +193,12 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 					hitInfo.hitPosition = centerA; 
 
 					agent->OnCollide(fixedTime, *pNeighbor, *pNeighbor->GetOwner(), hitInfo);
-					agent->HasCollided = true;
+					//agent->HasCollided = true;
 				}
 			}
 
 		}
 	}
-
-	int collisionCount = 0;
-	for (auto& agent : m_pPhysicsAgents)
-	{
-		if (agent->HasCollided) ++collisionCount;
-		agent->HasCollided = false;
-	}
-	std::cout << collisionCount << std::endl;
 
 }
 
@@ -242,7 +234,7 @@ void SimpleSpatialPhysicsSystem::UnregisterPhysicsComponent(PhysicsComponent* pP
 
 void SimpleSpatialPhysicsSystem::DebugDraw()
 {
-	m_pCellSpace->RenderCells();
+	//m_pCellSpace->RenderCells();
 	for (const auto& agent : m_pPhysicsAgents)
 	{
 		Engine::Rect box = agent->GetBoundingBox();

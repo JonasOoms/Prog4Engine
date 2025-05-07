@@ -74,16 +74,6 @@ void LoadDemoScene(dae::Scene& scene)
 	auto playerControllerComponentKeyboard = keyboardCharacterObject->AddComponent<PlayerControllerComponent>(200.f);
 	playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
 
-	auto testCollisionObject = std::make_shared<dae::GameObject>();
-	testCollisionObject->SetPosition(200, 80);
-	testCollisionObject->AddComponent<StaticPhysicsComponent>(glm::vec2{ 40.f, 40.0f });
-	testCollisionObject->AddComponent<RenderComponent>()->SetTexture("Textures/T_Turret.png");
-	scene.Add(testCollisionObject);
-	
-	/*testCollisionObject = std::make_shared<dae::GameObject>();
-	testCollisionObject->SetPosition(80+45, 80);
-	testCollisionObject->AddComponent<StaticPhysicsComponent>(glm::vec2{ 45.f, 45.f }, glm::vec2{ -22.5f, -22.5f });
-	scene.Add(testCollisionObject);*/
 
 	auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
 	auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);
@@ -97,10 +87,12 @@ void LoadDemoScene(dae::Scene& scene)
 	scene.Add(playerTankTurretObject);
 
 	auto gamepadCharacterObject = std::make_shared<dae::GameObject>();
-	gamepadCharacterObject->AddComponent<RenderComponent>()->SetTexture("Textures/T_EnemyTank.png");
+	auto EnemyTankRendererComponent = gamepadCharacterObject->AddComponent<TankRendererComponent>("Textures/T_EnemyTank.png", 45.f, 45.f);
+	gamepadCharacterObject->AddComponent<PhysicsComponent>(glm::vec2{ 45.f, 45.f });
 	auto gamepadCharacterLives = gamepadCharacterObject->AddComponent<ValueComponent<int>>(3);
 	auto gamepadCharacterPoints = gamepadCharacterObject->AddComponent<ValueComponent<int>>(0);
 	auto playerControllerComponentGamepad = gamepadCharacterObject->AddComponent<PlayerControllerComponent>(30.f);
+	playerControllerComponentGamepad->GetMovedEvent()->AddObserver(EnemyTankRendererComponent);
 	gamepadCharacterObject->SetPosition(30, 100);
 	scene.Add(gamepadCharacterObject);
 

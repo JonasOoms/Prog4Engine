@@ -74,7 +74,7 @@ public:
 private:
 	std::unique_ptr<SpatialPartitioning::CellSpace> m_pCellSpace;
 	std::vector<PhysicsComponent*> m_pPhysicsAgents;
-	float m_NeighborHoodRange{ 300.f };
+	float m_NeighborHoodRange{ 200.f };
 
 	// Inherited via Observer
 

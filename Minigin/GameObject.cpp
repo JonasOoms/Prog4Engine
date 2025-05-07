@@ -127,6 +127,12 @@ void dae::GameObject::SetPosition(float x, float y)
 	m_pGameObjectEventDispatcher->NotifyObservers(event);
 }
 
+glm::vec2 dae::GameObject::GetPosition()
+{
+	glm::vec3 worldPos = m_transform.GetWorldPosition();
+	return glm::vec2{ worldPos.x, worldPos.y };
+}
+
 dae::Transform& dae::GameObject::GetTransform()
 {
 	return m_transform;

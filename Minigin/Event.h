@@ -6,7 +6,7 @@ using event_type = unsigned int;
 
 namespace EventType
 {
-	inline constexpr unsigned int sdbm_hash(const char* str) {
+	inline consteval unsigned int sdbm_hash(const char* str) {
 		unsigned int hash = 0;
 		int c;
 		while ((c = *str++)) {

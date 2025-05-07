@@ -21,6 +21,7 @@ namespace dae
 		void Destroy();
 		bool GetDeleteFlag();
 		void SetPosition(float x, float y);
+		glm::vec2 GetPosition();
 
 		Transform& GetTransform();
 

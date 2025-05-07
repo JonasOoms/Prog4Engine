@@ -21,10 +21,10 @@ void PhysicsComponent::ComponentOwnerInitialized()
 	ServiceLocator::GetPhysicsSystem()->RegisterPhysicsComponent(this);
 }
 
-void PhysicsComponent::OnCollide(float dt, const PhysicsComponent&, const dae::GameObject&, const HitInfo& hitInfo)
+void PhysicsComponent::OnCollide(float , const PhysicsComponent&, const dae::GameObject&, const HitInfo& hitInfo)
 {
-	auto currentPosition = GetPosition();
-	auto collisionCorrection = currentPosition + (hitInfo.normal * hitInfo.penetrationDepth) * dt;
+	auto currentPosition = GetOwner()->GetPosition();
+	auto collisionCorrection = glm::vec2(currentPosition.x,currentPosition.y) + (hitInfo.normal * hitInfo.penetrationDepth);
 	GetOwner()->SetPosition(collisionCorrection.x, collisionCorrection.y);
 }
 
