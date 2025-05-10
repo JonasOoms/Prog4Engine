@@ -30,129 +30,12 @@
 #include "TurretComponent.h"
 #include "StaticPhysicsComponent.h"
 #include "SimpleSpatialPhysicsSystem.h"
-
-void LoadDemoScene(dae::Scene& scene)
-{
-	auto go = std::make_shared<dae::GameObject>();
-	go->AddComponent<RenderComponent>()->SetTexture("Background.tga");
-	scene.Add(go);
-
-
-	go = std::make_shared<dae::GameObject>();
-	auto component = go->AddComponent<RenderComponent>();
-	component->SetTexture("Logo.tga");
-	go->SetPosition(216, 180);
-	scene.Add(go);
-
-
-	go = std::make_shared<dae::GameObject>();
-	go->AddComponent<TextRenderComponent>("Programming 4 Assignment", "Lingua.otf", 36);
-	go->SetPosition(80, 20);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	TextRenderComponent* textComponent = go->AddComponent<TextRenderComponent>("FPS", "Lingua.otf", 22);
-	go->AddComponent<FPSComponent>(textComponent);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	go->AddComponent<TextRenderComponent>("Use the D-Pad to move the red tank, X to inflict damage, A and B to pick up pellets", "Lingua.otf", 14);
-	go->SetPosition(10, 100);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	go->AddComponent<TextRenderComponent>("Use WASD to move the blue tank, C to inflict damage, Z and X to pick up pellets", "Lingua.otf", 14);
-	go->SetPosition(10, 120);
-	scene.Add(go);
-
-
-
-
-	auto keyboardCharacterObject = std::make_shared<dae::GameObject>();
-	auto playerTankRendererComponent = keyboardCharacterObject->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png",  45.f,45.f);
-	keyboardCharacterObject->AddComponent<PhysicsComponent>(glm::vec2{ 45.f, 45.f });
-	auto playerControllerComponentKeyboard = keyboardCharacterObject->AddComponent<PlayerControllerComponent>(200.f);
-	playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
-
-
-	auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
-	auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);
-	keyboardCharacterObject->SetPosition(100, 100);
-	scene.Add(keyboardCharacterObject);
-
-	auto playerTankTurretObject = std::make_shared<dae::GameObject>();
-	playerTankTurretObject->AddComponent<TurretComponent>("Textures/T_Turret.png", 60.f, 60.f);
-	playerTankTurretObject->SetParent(keyboardCharacterObject.get(), false);
-	playerTankTurretObject->SetPosition(-5, -5);
-	scene.Add(playerTankTurretObject);
-
-	auto gamepadCharacterObject = std::make_shared<dae::GameObject>();
-	auto EnemyTankRendererComponent = gamepadCharacterObject->AddComponent<TankRendererComponent>("Textures/T_EnemyTank.png", 45.f, 45.f);
-	gamepadCharacterObject->AddComponent<PhysicsComponent>(glm::vec2{ 45.f, 45.f });
-	auto gamepadCharacterLives = gamepadCharacterObject->AddComponent<ValueComponent<int>>(3);
-	auto gamepadCharacterPoints = gamepadCharacterObject->AddComponent<ValueComponent<int>>(0);
-	auto playerControllerComponentGamepad = gamepadCharacterObject->AddComponent<PlayerControllerComponent>(30.f);
-	playerControllerComponentGamepad->GetMovedEvent()->AddObserver(EnemyTankRendererComponent);
-	gamepadCharacterObject->SetPosition(30, 100);
-	scene.Add(gamepadCharacterObject);
-
-
-	go = std::make_shared<dae::GameObject>();
-	auto livesDisplay1 = go->AddComponent<ValueDisplayComponent>("#Lives: ", "", keyboardCharacterLives->Get());
-	keyboardCharacterLives->AddObserver(livesDisplay1);
-	go->SetPosition(10, 200);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	auto pointDisplay1 = go->AddComponent<ValueDisplayComponent>("#Points: ", "", keyboardCharacterPoints->Get());
-	gamepadCharacterPoints->AddObserver(pointDisplay1);
-	go->SetPosition(10, 220);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	auto livesDisplay2 = go->AddComponent<ValueDisplayComponent>("#Lives: ", "", keyboardCharacterLives->Get());
-	gamepadCharacterLives->AddObserver(livesDisplay2);
-	go->SetPosition(10, 240);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	auto pointDisplay2 = go->AddComponent<ValueDisplayComponent>("#Points: ", "", keyboardCharacterPoints->Get());
-	keyboardCharacterPoints->AddObserver(pointDisplay2);
-	go->SetPosition(10, 260);
-	scene.Add(go);
-
-	go = std::make_shared<dae::GameObject>();
-	AchievementObserver* achievement1 = go->AddComponent<AchievementObserver>();
-	gamepadCharacterPoints->AddObserver(achievement1);
-	AchievementObserver* achievement2 = go->AddComponent<AchievementObserver>();
-	keyboardCharacterPoints->AddObserver(achievement2);
-	scene.Add(go);
-
-
-	auto inputMappingKeyboard = new InputMapping();
-	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_W, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
-	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_D, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
-	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_S, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
-	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
-
-	inputMappingKeyboard->AddInputBinding(SDLK_c, TriggerType::Released, new ValueIncreaseCommand<int>(-1, keyboardCharacterLives));
-	inputMappingKeyboard->AddInputBinding(SDLK_z, TriggerType::Released, new ValueIncreaseCommand<int>(10, keyboardCharacterPoints));
-	inputMappingKeyboard->AddInputBinding(SDLK_x, TriggerType::Released, new ValueIncreaseCommand<int>(100, keyboardCharacterPoints));
-
-	dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
-
-	auto inputMappingGamepad = new InputMapping();
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_DPAD_UP, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentGamepad, glm::vec2{ 0,-1 }));
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentGamepad, glm::vec2{ 1,0 }));
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentGamepad, glm::vec2{ 0,1 }));
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentGamepad, glm::vec2{ -1,0 }));
-
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_X, TriggerType::Released, new ValueIncreaseCommand<int>(-1, keyboardCharacterLives));
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Released, new ValueIncreaseCommand<int>(10, keyboardCharacterPoints));
-	inputMappingGamepad->AddInputBinding(XINPUT_GAMEPAD_B, TriggerType::Released, new ValueIncreaseCommand<int>(100, keyboardCharacterPoints));
-
-	dae::InputManager::GetInstance().GetPlayerController(0)->AddMapping(inputMappingGamepad);
-}
+#include <memory>
+#include "GridComponent.h"
+#include "RectangleRenderer.h"
+#include "LevelLoader.h"
+#include "GamePrefabs.h"
+#include "BounceyPhysicsComponent.h"
 
 void load()
 {
@@ -160,8 +43,49 @@ void load()
 	ServiceLocator::RegisterSoundSystem(std::make_unique<SDL_SoundSystem>());
 	ServiceLocator::RegisterPhysicsSystem(std::make_unique<SimpleSpatialPhysicsSystem>((float) dae::Minigin::windowWidth, (float) dae::Minigin::windowHeight));
 
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
-	LoadDemoScene(scene);
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Level");
+
+	auto go = new dae::GameObject();
+	go->AddComponent<RectangleRendererComponent>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight,"Textures/T_CircuitBoard.png");
+	scene.Add(go);
+
+	JSONLevelLoader loader{};
+	loader.Parse("../Data/Levels/LevelUno.json", scene);
+	
+	//TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 0);
+	//auto playerTankRendererComponent = tank->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png", 40.f, 40.f);
+	//tank->AddComponent<PhysicsComponent>(glm::vec2{ 40.f, 40.f });
+	//auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(200.f);
+	//playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
+
+
+	///*auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
+	//auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);*/
+	//tank->SetPosition(100, 100);
+	//scene.Add(tank);
+
+	//auto playerTankTurretObject = new dae::GameObject();
+	//playerTankTurretObject->AddComponent<TurretComponent>("Textures/T_Turret.png", 60.f, 60.f);
+	//playerTankTurretObject->SetParent(tank, false);
+	//playerTankTurretObject->SetPosition(-8, -8);
+	//scene.Add(playerTankTurretObject);
+
+
+	//auto inputMappingKeyboard = new InputMapping();
+	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_W, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
+	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_D, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
+	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_S, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
+	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
+	//dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
+
+
+	//auto inputMapping = new InputMapping();
+	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_UP, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
+	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
+	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
+	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
+	//dae::InputManager::GetInstance().GetPlayerController(0)->AddMapping(inputMapping);
+
 
 	auto soundSystem = ServiceLocator::GetSoundSystem();
 	sound_id sound1 = soundSystem->RegisterAudio("../Data/Sounds/S_Intro.wav");

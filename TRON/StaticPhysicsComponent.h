@@ -9,6 +9,6 @@ public:
 		: PhysicsComponent(size)
 	{
 	};
-	virtual void OnCollide(float ,const PhysicsComponent&, const dae::GameObject&, const HitInfo&) override {};
+	virtual void OnCollide(float ,PhysicsComponent&, dae::GameObject&, const HitInfo&) override {};
 };
 

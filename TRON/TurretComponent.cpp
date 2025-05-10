@@ -22,3 +22,8 @@ void TurretComponent::Render()
 void TurretComponent::Update(float)
 {
 }
+
+void TurretComponent::AddAngle(float angle)
+{
+	m_Angle += angle;
+}

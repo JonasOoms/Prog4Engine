@@ -152,28 +152,43 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AchievementObserver.cpp" />
+    <ClCompile Include="BounceyPhysicsComponent.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
+    <ClCompile Include="GridComponent.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerControllerCommand.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
+    <ClCompile Include="RectangleRenderer.cpp" />
+    <ClCompile Include="ShootCommand.cpp" />
     <ClCompile Include="StaticPhysicsComponent.cpp" />
     <ClCompile Include="TankRendererComponent.cpp" />
+    <ClCompile Include="TurretAngleChangeCommand.cpp" />
     <ClCompile Include="TurretComponent.cpp" />
     <ClCompile Include="ValueDisplayComponent.cpp" />
     <ClCompile Include="ValueIncreaseCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h" />
+    <ClInclude Include="BounceyPhysicsComponent.h" />
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameEnums.h" />
     <ClInclude Include="GameEvents.h" />
+    <ClInclude Include="GamePrefabs.h" />
     <ClInclude Include="GameUtils.h" />
+    <ClInclude Include="GridComponent.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
+    <ClInclude Include="RectangleRenderer.h" />
+    <ClInclude Include="ShootCommand.h" />
     <ClInclude Include="StaticPhysicsComponent.h" />
     <ClInclude Include="TankRendererComponent.h" />
+    <ClInclude Include="TurretAngleChangeCommand.h" />
     <ClInclude Include="TurretComponent.h" />
     <ClInclude Include="ValueComponent.h" />
     <ClInclude Include="ValueDisplayComponent.h" />

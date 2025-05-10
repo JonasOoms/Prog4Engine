@@ -20,7 +20,7 @@ public:
 	/// <summary>
 	/// Handle collision with other physics components. DO NOT CALL THIS DIRECTLY UNLESS YOU KNOW WHAT YOU ARE DOING
 	/// </summary>
-	virtual void OnCollide(float dt, const PhysicsComponent&, const dae::GameObject&, const HitInfo&);
+	virtual void OnCollide(float dt, PhysicsComponent&, dae::GameObject&, const HitInfo&);
 
 	Engine::Rect GetBoundingBox() const;
 	glm::vec2 GetPosition() const;
@@ -29,10 +29,10 @@ public:
 
 
 	bool HasCollided{false};
-
+protected:
+	glm::vec2 m_Velocity{ 0,0 };
 private:
 	bool doDebugRendering{ false };
 	glm::vec2 m_Bounds{ 0,0 };
-	glm::vec2 m_Velocity{ 0,0 };
 };
 

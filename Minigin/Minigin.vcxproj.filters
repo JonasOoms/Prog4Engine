@@ -135,10 +135,13 @@
     <ClInclude Include="NullPhysicsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSpatialPhysicsSystem.h">
+    <ClInclude Include="EngineUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineUtils.h">
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSpatialPhysicsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

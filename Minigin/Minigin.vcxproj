@@ -217,6 +217,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="InputMapping.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="NullPhysicsSystem.h" />
     <ClInclude Include="NullSoundSystem.h" />

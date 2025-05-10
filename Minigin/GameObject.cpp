@@ -68,7 +68,7 @@ bool dae::GameObject::IsParentOf(GameObject* object)
 	return false;
 }
 
-void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
+void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition, bool sendEvent)
 {
 	bool isValid{ !this->IsParentOf(parent) || !(parent == this) || !(m_Parent == parent)};
 	assert(isValid);
@@ -83,25 +83,36 @@ void dae::GameObject::SetParent(GameObject* parent, bool keepWorldPosition)
 		}
 		if (m_Parent)
 		{
-			m_Parent->RemoveChild(this);
+			m_Parent->RemoveChild(this, sendEvent);
 		}
 		m_Parent = parent;
 		if (m_Parent)
 		{
-			m_Parent->AddChild(this);
+			m_Parent->AddChild(this, sendEvent);
 		}
 	}
 }
 
-void dae::GameObject::RemoveChild(GameObject* object)
+void dae::GameObject::RemoveChild(GameObject* object, bool sendEvent)
 {
-	
+	if (sendEvent)
+	{
+		EventContext::GameObjectChildHierarchyChangedContext ctx{ this, object };
+		Event removeChildEvent{ EngineEvents::EVENT_GAMEOBJECT_CHILDREMOVED, ctx };
+		m_pGameObjectEventDispatcher->NotifyObservers(removeChildEvent);
+	}
 	std::erase(m_Children, object);
 }
 
-void dae::GameObject::AddChild(GameObject* object)
+void dae::GameObject::AddChild(GameObject* object, bool sendEvent)
 {
 	m_Children.emplace_back(object);
+	if (sendEvent)
+	{
+		EventContext::GameObjectChildHierarchyChangedContext ctx{ this, object };
+		Event addChildEvent{ EngineEvents::EVENT_GAMEOBJECT_CHILDADDED, ctx };
+		m_pGameObjectEventDispatcher->NotifyObservers(addChildEvent);
+	}
 }
 
 void dae::GameObject::Destroy()

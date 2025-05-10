@@ -38,7 +38,7 @@ namespace dae
 		bool RemoveComponent();
 
 		bool IsParentOf(GameObject* object);
-		void SetParent(GameObject* parent, bool keepWorldPosition);
+		void SetParent(GameObject* parent, bool keepWorldPosition, bool sendEvent = true);
 
 		GameObject* GetParent() { return m_Parent; }
 
@@ -64,8 +64,8 @@ namespace dae
 		std::vector<std::unique_ptr<Component>> m_Components;
 		std::unique_ptr<EventDispatcher> m_pGameObjectEventDispatcher;
 		
-		void RemoveChild(GameObject* object);
-		void AddChild(GameObject* object);
+		void RemoveChild(GameObject* object, bool sendEvent);
+		void AddChild(GameObject* object, bool sendEvent);
 	};
 
 	// TODO: use concepts here

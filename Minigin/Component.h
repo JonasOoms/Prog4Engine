@@ -37,5 +37,7 @@ private:
 	bool m_DeleteFlag{false};
 	dae::GameObject* m_pOwner;
 
+
+
 };
 

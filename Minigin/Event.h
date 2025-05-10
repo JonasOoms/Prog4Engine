@@ -22,6 +22,8 @@ namespace EngineEvents
 {
 	constexpr event_type EVENT_VALUE_CHANGED = EventType::sdbm_hash("EVENT_VALUE_CHANGED");
 	constexpr event_type EVENT_GAMEOBJECT_TRANSFORMCHANGED = EventType::sdbm_hash("EVENT_GAMEOBJECT_TRANSFORMCHANGED");
+	constexpr event_type EVENT_GAMEOBJECT_CHILDADDED = EventType::sdbm_hash("EVENT_GAMEOBJECT_CHILDADDED");
+	constexpr event_type EVENT_GAMEOBJECT_CHILDREMOVED = EventType::sdbm_hash("EVENT_GAMEOBJECT_CHILDREMOVED");
 }
 
 struct Event
@@ -43,5 +45,11 @@ namespace EventContext
 		dae::GameObject* gameObject;
 		dae::Transform oldTransform;
 		dae::Transform newTransform;
+	};
+
+	struct GameObjectChildHierarchyChangedContext
+	{
+		dae::GameObject* parent;
+		dae::GameObject* child;
 	};
 }

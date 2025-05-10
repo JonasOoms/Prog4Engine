@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Renderer.h"
 
+
 // ------ Cell -----
 SpatialPartitioning::Cell::Cell(float left, float bottom, float width, float height)
 {
@@ -101,12 +102,6 @@ void SpatialPartitioning::CellSpace::RegisterNeighbors(PhysicsComponent* const p
 			int cellIdx = row * m_NrOfCols + col;
 			Cell& cell = m_Cells[cellIdx];
 
-
-			if (Engine::CheckAABBCollision(cell.m_BoundingBox, Engine::Rect{ agentPos - glm::vec2(neighborhoodRadius, neighborhoodRadius), neighborhoodRadius * 2, neighborhoodRadius * 2 }))
-			{
-				continue;
-			}
-
 			for (const auto& agent : cell.m_pPhysicsAgents)
 			{
 
@@ -158,8 +153,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 		{
 			PhysicsComponent* pNeighbor = m_pCellSpace->GetNeighbors()[neighborIndex];
 			if (pNeighbor == agent) continue;
-			//if (pNeighbor->HasCollided) continue;
-
+			
 			if (Engine::CheckAABBCollision(agent->GetBoundingBox(), pNeighbor->GetBoundingBox()))
 			{
 				const Engine::Rect& rectA = agent->GetBoundingBox();
@@ -191,13 +185,16 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 					}
 
 					hitInfo.hitPosition = centerA; 
-
 					agent->OnCollide(fixedTime, *pNeighbor, *pNeighbor->GetOwner(), hitInfo);
-					//agent->HasCollided = true;
 				}
 			}
 
 		}
+	}
+
+	for (auto& agent : m_pPhysicsAgents)
+	{
+		agent->HasCollided = false;
 	}
 
 }
@@ -237,8 +234,11 @@ void SimpleSpatialPhysicsSystem::DebugDraw()
 	//m_pCellSpace->RenderCells();
 	for (const auto& agent : m_pPhysicsAgents)
 	{
+		
 		Engine::Rect box = agent->GetBoundingBox();
 		dae::Renderer::GetInstance().DrawSquare((int) box.x, (int) box.y, (int) agent->GetWidth(), {0, 255, 0, 255});
+
+		glm::vec2 pos = agent->GetOwner()->GetTransform().GetWorldPosition();
 	}
 }
 
