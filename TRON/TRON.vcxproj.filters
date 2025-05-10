@@ -66,8 +66,8 @@
     <ClCompile Include="ShootCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StaticPhysicsComponent.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="GameRegistries.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +134,7 @@
     <ClInclude Include="ShootCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StaticPhysicsComponent.h">
+    <ClInclude Include="GameRegistries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -49,7 +49,7 @@ namespace TRONGameObjects
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 				inputMappingKeyboard->AddInputBinding(SDLK_q, TriggerType::Down, new TurretAngleChangeCommand(turret, -30));
 				inputMappingKeyboard->AddInputBinding(SDLK_e, TriggerType::Down, new TurretAngleChangeCommand(turret, 30));
-				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, new ShootCommand(turret, scene, 100, 0.5f));
+				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, new ShootCommand(turret, scene, 15, 0.5f));
 				dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
 			}
 
@@ -60,16 +60,18 @@ namespace TRONGameObjects
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_LEFT_SHOULDER, TriggerType::Down, new TurretAngleChangeCommand(turret, -30));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_RIGHT_SHOULDER, TriggerType::Down, new TurretAngleChangeCommand(turret, 30));
+			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, new ShootCommand(turret, scene, 15, 0.5f));
 			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(inputMappingKeyboard);
 
 			return tank;
-		}
+		} 
 
 		inline dae::GameObject* CreateProjectile(dae::Scene& scene, dae::GameObject* tank, glm::vec2 velocity)
 		{
 			auto bullet = new dae::GameObject();
-			bullet->AddComponent<BounceyPhysicsComponent>(glm::vec2{ 20.f,20.f }, velocity, tank->GetParent());
-			glm::vec2 pos = tank->GetPosition();
+
+			bullet->AddComponent<BounceyPhysicsComponent>(glm::vec2{ 20.f,20.f }, velocity, tank);
+			glm::vec2 pos = tank->GetComponent<PhysicsComponent>()->GetPosition();
 			bullet->SetPosition(pos.x, pos.y);
 			scene.Add(bullet);
 			return bullet;

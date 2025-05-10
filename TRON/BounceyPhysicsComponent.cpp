@@ -1,35 +1,68 @@
 #include "BounceyPhysicsComponent.h"
 #include "PhysicsSystem.h"
-#include "StaticPhysicsComponent.h"
+#include <memory>
 
 
 BounceyPhysicsComponent::BounceyPhysicsComponent(glm::vec2 size, glm::vec2 velocity, dae::GameObject* tankFiredFrom):
 	PhysicsComponent(size),
-	m_TankFiredFrom{tankFiredFrom}
+	m_TankFiredFrom{tankFiredFrom},
+	m_State{std::make_unique<FlyingState>()}
 {
-	m_Velocity = velocity;
+	SetVelocity(velocity);
 }
 
 void BounceyPhysicsComponent::OnCollide(float dt , PhysicsComponent& component,dae::GameObject& gameobject, const HitInfo& hitInfo)
 {
-	if (&gameobject == m_TankFiredFrom)
-	{
-		if (m_countCollisions < 5)
-		{
-			PhysicsComponent::OnCollide(dt, component, gameobject, hitInfo);
-			m_Velocity = glm::reflect(m_Velocity, hitInfo.normal);
-			++m_countCollisions;
-		}
-		else
-		{
-			GetOwner()->Destroy();
-		}
-	}
+	m_State->OnCollision(*this, dt, component, gameobject, hitInfo);
 }
 
 void BounceyPhysicsComponent::Update(float deltaTime)
 {
-	glm::vec2 pos = GetOwner()->GetPosition();
-	glm::vec2 delta =  m_Velocity * deltaTime;
-	GetOwner()->SetPosition(pos.x + delta.x, pos.y + delta.y);
+	m_State->Update(*this, deltaTime);
+}
+
+void BounceyPhysicsComponent::SetState(BulletState* state)
+{
+	m_State = std::unique_ptr<BulletState>{ state };
+}
+
+void FlyingState::Update(BounceyPhysicsComponent& bullet, float dt)
+{
+	glm::vec2 pos = bullet.GetOwner()->GetPosition();
+	glm::vec2 delta = bullet.GetVelocity() * dt;
+	bullet.GetOwner()->SetPosition(pos.x + delta.x, pos.y + delta.y);
+	m_HasBounced = false;
+}
+
+void FlyingState::OnCollision(BounceyPhysicsComponent& bullet, float dt, PhysicsComponent& component, dae::GameObject& gameObject, const HitInfo& hitInfo)
+{
+	if (component.GetIsStatic())
+	{
+		if (!m_HasBounced)
+		{
+			if (!(&gameObject == bullet.GetTankFiredFrom()))
+			{
+				if (m_countCollisions < 5)
+				{
+					bullet.PhysicsComponent::OnCollide(dt, component, gameObject, hitInfo);
+					bullet.SetVelocity(glm::reflect(bullet.GetVelocity(), hitInfo.normal));
+					m_HasBounced = true;
+					++m_countCollisions;
+				}
+				else
+				{
+					bullet.SetState(new ExplodingState());
+				}
+			}
+		}
+	}
+}
+
+void ExplodingState::Update(BounceyPhysicsComponent& bullet, float dt)
+{
+	m_ExplosionCountdown -= dt;
+	if (m_ExplosionCountdown <= 0)
+	{
+		bullet.GetOwner()->Destroy();
+	}
 }

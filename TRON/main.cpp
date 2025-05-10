@@ -28,7 +28,7 @@
 #include "ServiceLocator.h"
 #include "SDL_SoundSystem.h"
 #include "TurretComponent.h"
-#include "StaticPhysicsComponent.h"
+
 #include "SimpleSpatialPhysicsSystem.h"
 #include <memory>
 #include "GridComponent.h"
@@ -36,6 +36,7 @@
 #include "LevelLoader.h"
 #include "GamePrefabs.h"
 #include "BounceyPhysicsComponent.h"
+#include "GameRegistries.h"
 
 void load()
 {
@@ -88,10 +89,13 @@ void load()
 
 
 	auto soundSystem = ServiceLocator::GetSoundSystem();
-	sound_id sound1 = soundSystem->RegisterAudio("../Data/Sounds/S_Intro.wav");
-	soundSystem->RegisterAudio("../Data/Sounds/S_SFX1.wav");
+	TRONRegistries::GameSoundRegistry.Register("Intro", soundSystem->RegisterAudio("../Data/Sounds/S_Intro.wav"));
+	TRONRegistries::GameSoundRegistry.Register("SFX1", soundSystem->RegisterAudio("../Data/Sounds/S_SFX1.wav"));
+
 	
-	soundSystem->Play(sound1, 128.f);
+
+	
+	soundSystem->Play(TRONRegistries::GameSoundRegistry.Get("Intro"), 128.f);
 	
 }
 

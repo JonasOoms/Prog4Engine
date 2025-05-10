@@ -2,7 +2,6 @@
 #include <json.hpp>
 #include <fstream>
 #include "GridComponent.h"
-#include "StaticPhysicsComponent.h"
 #include "Minigin.h"
 #include "GamePrefabs.h"
 #include "RectangleRenderer.h"
@@ -38,7 +37,7 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 				int y = tile.at("y");
 
 				dae::GameObject* gameobject = new dae::GameObject();
-				gameobject->AddComponent<StaticPhysicsComponent>(glm::vec2{ collisionTileWidth,collisionTileHeight });
+				gameobject->AddComponent<PhysicsComponent>(glm::vec2{ collisionTileWidth,collisionTileHeight })->SetIsStatic(true);
 				scene.Add(gameobject);
 				gridComponent->InsertAndParent(gameobject, x, y);
 			}

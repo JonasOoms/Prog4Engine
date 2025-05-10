@@ -208,6 +208,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
     <ClInclude Include="..\3rdParty\imgui-1.90.9\imstb_textedit.h" />
     <ClInclude Include="..\3rdParty\imgui-1.90.9\imstb_truetype.h" />
     <ClInclude Include="..\3rdParty\implot-0.16\implot.h" />
+    <ClInclude Include="..\TRON\Registry.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineStructs.h" />
