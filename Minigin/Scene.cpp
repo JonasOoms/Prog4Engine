@@ -16,6 +16,11 @@ void Scene::Add(dae::GameObject* object)
 	m_objects.emplace_back(std::unique_ptr<GameObject>{object});
 }
 
+void dae::Scene::Add(std::unique_ptr<GameObject>&& gameObject)
+{
+	m_objects.emplace_back(std::move(gameObject));
+}
+
 void Scene::Remove(dae::GameObject* object)
 {
 	m_objects.erase(
@@ -67,6 +72,14 @@ void Scene::Render() const
 	for (const auto& object : m_objects)
 	{
 		object->Render();
+	}
+}
+
+void dae::Scene::DebugDraw() const
+{
+	for (const auto& object : m_objects)
+	{
+		object->DebugDraw();
 	}
 }
 

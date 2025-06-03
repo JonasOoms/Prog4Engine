@@ -15,9 +15,10 @@
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
+#include <random>
 
 SDL_Window* dae::Minigin::g_window = nullptr;
-
+float dae::Minigin::m_DeltaTime = 0.0f;
 bool dae::Minigin::doContinue = true;
 
 void PrintSDLVersion()
@@ -50,6 +51,8 @@ void PrintSDLVersion()
 
 dae::Minigin::Minigin(const std::string &dataPath)
 {
+	std::random_device rd{};
+	srand(rd());
 	PrintSDLVersion();
 	
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
@@ -120,6 +123,8 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			sceneManager.FixedUpdate(fixed_time_step);
 			lag -= fixed_time_step;
 		}
+
+		m_DeltaTime = delta_time;
 
 		sceneManager.Update(delta_time);
 		sceneManager.LateUpdate(delta_time);

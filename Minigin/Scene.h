@@ -9,6 +9,7 @@ namespace dae
 		friend Scene& SceneManager::CreateScene(const std::string& name);
 	public:
 		void Add(dae::GameObject* object);
+		void Add(std::unique_ptr<GameObject>&& gameObject);
 		void Remove(dae::GameObject* object);
 		void RemoveAll();
 
@@ -16,6 +17,9 @@ namespace dae
 		void FixedUpdate(float fixedTime);
 		void LateUpdate(float deltaTime);
 		void Render() const;
+		void DebugDraw() const;
+
+		std::string_view GetName() const {return m_name;}
 
 		~Scene();
 		Scene(const Scene& other) = delete;

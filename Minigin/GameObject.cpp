@@ -40,6 +40,16 @@ void dae::GameObject::LateUpdate(float deltaTime)
 		});
 }
 
+void dae::GameObject::DebugDraw() const
+{
+#ifdef _DEBUG
+	for (auto& component : m_Components)
+	{
+		component->DebugDraw();
+	}
+#endif 
+}
+
 void dae::GameObject::Render() const
 {
 	for (const std::unique_ptr<Component>& component : m_Components)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -152,10 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AchievementObserver.cpp" />
+    <ClCompile Include="AITankComponent.cpp" />
     <ClCompile Include="BounceyPhysicsComponent.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="GameRegistries.cpp" />
     <ClCompile Include="GridComponent.cpp" />
+    <ClCompile Include="GridPathRenderer.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
@@ -164,6 +166,8 @@
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
     <ClCompile Include="ShootCommand.cpp" />
+    <ClCompile Include="SimpleMoveCommand.cpp" />
+    <ClCompile Include="TankPhysicsComponent.cpp" />
     <ClCompile Include="TankRendererComponent.cpp" />
     <ClCompile Include="TurretAngleChangeCommand.cpp" />
     <ClCompile Include="TurretComponent.cpp" />
@@ -172,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h" />
+    <ClInclude Include="AITankComponent.h" />
     <ClInclude Include="BounceyPhysicsComponent.h" />
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameEnums.h" />
@@ -180,6 +185,7 @@
     <ClInclude Include="GameRegistries.h" />
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="GridComponent.h" />
+    <ClInclude Include="GridPathRenderer.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
@@ -187,6 +193,8 @@
     <ClInclude Include="PlayerControllerMoveCommand.h" />
     <ClInclude Include="RectangleRenderer.h" />
     <ClInclude Include="ShootCommand.h" />
+    <ClInclude Include="SimpleMoveCommand.h" />
+    <ClInclude Include="TankPhysicsComponent.h" />
     <ClInclude Include="TankRendererComponent.h" />
     <ClInclude Include="TurretAngleChangeCommand.h" />
     <ClInclude Include="TurretComponent.h" />

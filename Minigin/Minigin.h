@@ -18,6 +18,11 @@ namespace dae
 		Minigin& operator=(const Minigin& other) = delete;
 		Minigin& operator=(Minigin&& other) = delete;
 
+		static float GetDeltaTime()
+		{
+			return m_DeltaTime;
+		}
+
 		const float fixed_time_step{ 0.166667f };
 		const long ms_per_frame{ 16 };
 		
@@ -27,5 +32,6 @@ namespace dae
 		static SDL_Window* g_window;
 		static bool doContinue;
 	private:
+		static float m_DeltaTime;
 	};
 }

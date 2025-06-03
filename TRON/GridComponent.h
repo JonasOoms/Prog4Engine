@@ -1,8 +1,10 @@
 #pragma once
 #include "Observer.h"
 #include "Component.h"
+#include "Graph.h"
 #include <vector>
 #include <glm.hpp>
+
 
 namespace dae
 {
@@ -22,6 +24,15 @@ public:
 	void Notify(const Event& event, EventDispatcher* subject) override;
 	void InsertAndParent(dae::GameObject* object, int row, int column);
 	glm::vec2 GetPositionAt(int row, int column);
+	int GetIndexFromPosition(const glm::vec2& pos);
+
+	Engine::Graph* GetGraphFromGrid();
+
+	int GetNumRows() const { return m_Rows; }
+	int GetNumColumns() const { return m_Columns; };
+	float GetCellWidth() const { return m_CellWidth; }
+	float GetCellHeight() const { return m_CellHeight; }
+
 private:
 	const float m_Width;
 	const float m_Height;
@@ -32,13 +43,16 @@ private:
 
 	int m_lastAddedIndex{};
 	std::vector<std::vector<dae::GameObject*>> m_Grid;
-	
+
+	bool m_IsGraphValid{false};
+	std::unique_ptr<Engine::Graph> m_pCachedGraph;
+
+
 	void Add(dae::GameObject* object);
 	void Remove(dae::GameObject* object);
 	void Insert(dae::GameObject* object, int row, int column);
 	dae::GameObject* Get(int row, int column);
 
-
+	bool isStaticAt(int row, int column);
 	// Inherited via Observer
 };
-

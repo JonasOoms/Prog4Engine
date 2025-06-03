@@ -69,6 +69,18 @@
     <ClCompile Include="GameRegistries.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GridPathRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AITankComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TankPhysicsComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMoveCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h">
@@ -97,12 +109,6 @@
     </ClInclude>
     <ClInclude Include="ValueComponent.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueDisplayComponent.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueIncreaseCommand.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="GameUtils.h">
       <Filter>Header Files</Filter>
@@ -135,6 +141,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameRegistries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridPathRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AITankComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueDisplayComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueIncreaseCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TankPhysicsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMoveCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

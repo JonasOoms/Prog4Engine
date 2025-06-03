@@ -16,6 +16,7 @@ namespace dae
 		void Update(float deltaTime);
 		void FixedUpdate(float fixedTime);
 		void LateUpdate(float deltaTime);
+		void DebugDraw() const;
 		void Render() const;
 
 		void Destroy();
@@ -73,14 +74,15 @@ namespace dae
 	inline componentType* GameObject::GetComponent()
 	{
 		auto itComponent = std::find_if(m_Components.begin(), m_Components.end(), [&](const std::unique_ptr<Component>& a) {
-			auto aConverted = dynamic_cast<componentType*>(a.get());
-			if (aConverted)
-			{
-				return true;
-			}
-			return false;
+			return dynamic_cast<componentType*>(a.get()) != nullptr;
 			});
-		return (componentType*)((*itComponent).get());
+
+		if (itComponent != m_Components.end())
+		{
+			return dynamic_cast<componentType*>(itComponent->get());
+		}
+
+		return nullptr;
 	}
 
 	template<typename componentType>

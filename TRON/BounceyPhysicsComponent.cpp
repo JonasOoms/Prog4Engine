@@ -3,7 +3,7 @@
 #include <memory>
 
 
-BounceyPhysicsComponent::BounceyPhysicsComponent(glm::vec2 size, glm::vec2 velocity, dae::GameObject* tankFiredFrom):
+BounceyPhysicsComponent::BounceyPhysicsComponent(const glm::vec2& size, const glm::vec2& velocity, dae::GameObject* tankFiredFrom):
 	PhysicsComponent(size),
 	m_TankFiredFrom{tankFiredFrom},
 	m_State{std::make_unique<FlyingState>()}
@@ -13,28 +13,30 @@ BounceyPhysicsComponent::BounceyPhysicsComponent(glm::vec2 size, glm::vec2 veloc
 
 void BounceyPhysicsComponent::OnCollide(float dt , PhysicsComponent& component,dae::GameObject& gameobject, const HitInfo& hitInfo)
 {
-	m_State->OnCollision(*this, dt, component, gameobject, hitInfo);
+	if (auto newState = m_State->OnCollision(*this, dt, component, gameobject, hitInfo))
+	{
+		m_State = std::move(newState);
+	}
 }
 
 void BounceyPhysicsComponent::Update(float deltaTime)
 {
-	m_State->Update(*this, deltaTime);
+	if (auto newState = m_State->Update(*this, deltaTime)) {
+		m_State = std::move(newState);
+	}
 }
 
-void BounceyPhysicsComponent::SetState(BulletState* state)
-{
-	m_State = std::unique_ptr<BulletState>{ state };
-}
 
-void FlyingState::Update(BounceyPhysicsComponent& bullet, float dt)
+std::unique_ptr<BulletState> FlyingState::Update(BounceyPhysicsComponent& bullet, float dt)
 {
 	glm::vec2 pos = bullet.GetOwner()->GetPosition();
 	glm::vec2 delta = bullet.GetVelocity() * dt;
 	bullet.GetOwner()->SetPosition(pos.x + delta.x, pos.y + delta.y);
 	m_HasBounced = false;
+	return nullptr;
 }
 
-void FlyingState::OnCollision(BounceyPhysicsComponent& bullet, float dt, PhysicsComponent& component, dae::GameObject& gameObject, const HitInfo& hitInfo)
+std::unique_ptr<BulletState> FlyingState::OnCollision(BounceyPhysicsComponent& bullet, float dt, PhysicsComponent& component, dae::GameObject& gameObject, const HitInfo& hitInfo)
 {
 	if (component.GetIsStatic())
 	{
@@ -51,18 +53,20 @@ void FlyingState::OnCollision(BounceyPhysicsComponent& bullet, float dt, Physics
 				}
 				else
 				{
-					bullet.SetState(new ExplodingState());
+					return std::make_unique<ExplodingState>();
 				}
 			}
 		}
 	}
+	return nullptr;
 }
 
-void ExplodingState::Update(BounceyPhysicsComponent& bullet, float dt)
+std::unique_ptr<BulletState> ExplodingState::Update(BounceyPhysicsComponent& bullet, float dt)
 {
 	m_ExplosionCountdown -= dt;
 	if (m_ExplosionCountdown <= 0)
 	{
 		bullet.GetOwner()->Destroy();
 	}
+	return nullptr;
 }

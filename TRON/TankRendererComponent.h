@@ -9,6 +9,8 @@ public:
 
 	TankRendererComponent(const std::string& tankTexturePath, float width, float height);
 
+
+	virtual void ComponentOwnerInitialized() override;
 	virtual void Render();
 	virtual void Update(float deltaTime) override;
 private:

@@ -157,4 +157,22 @@ void dae::Renderer::DrawPolygon(const std::vector<glm::vec2>& points, SDL_Color 
 		SDL_RenderDrawLine(GetSDLRenderer(), (int) points[sdlPoints.size() - 1].x, (int) points[sdlPoints.size() - 1].y, (int) points[0].x, (int) points[0].y);
 }
 
+void dae::Renderer::drawLine(int x1, int y1, int x2, int y2, SDL_Color color)
+{
+	SDL_Renderer* renderer = GetSDLRenderer();
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+}
+
+void dae::Renderer::DrawPoint(int x, int y, SDL_Color color) {
+	SDL_Renderer* renderer = GetSDLRenderer();
+	if (!renderer) return;
+
+	// Set the drawing color
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+	// Draw the point
+	SDL_RenderDrawPoint(renderer, x, y);
+}
+
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }

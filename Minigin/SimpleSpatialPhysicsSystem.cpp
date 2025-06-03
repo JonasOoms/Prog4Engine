@@ -135,6 +135,132 @@ void SpatialPartitioning::CellSpace::RenderCells() const
 
 }
 
+std::optional<HitInfo> SpatialPartitioning::CellSpace::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance)
+{
+	glm::vec2 dir = glm::normalize(direction);
+	glm::vec2 invDir = 1.0f / dir;
+
+	glm::vec2 rayPos = origin;
+	float t = 0.0f;
+	float step = 1.0f;
+
+	std::optional<HitInfo> closestHit;
+	float closestDistance = maxDistance;
+
+
+	while (t < maxDistance)
+	{
+		glm::vec2 pos = origin + dir * t;
+		int index = PositionToIndex(pos);
+
+		if (index < 0 || index >= static_cast<int>(m_Cells.size()))
+		{
+			t += step;
+			continue;
+		}
+
+		const SpatialPartitioning::Cell& cell = m_Cells[index];
+
+		for (PhysicsComponent* agent : cell.m_pPhysicsAgents)
+		{
+			const Engine::Rect& rect = agent->GetBoundingBox();
+
+			glm::vec2 min = { rect.x, rect.y };
+			glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
+
+			glm::vec2 t1 = (min - origin) * invDir;
+			glm::vec2 t2 = (max - origin) * invDir;
+
+			glm::vec2 tmin = glm::min(t1, t2);
+			glm::vec2 tmax = glm::max(t1, t2);
+
+			float tNear = std::max(tmin.x, tmin.y);
+			float tFar = std::min(tmax.x, tmax.y);
+
+			if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
+			{
+				// We have a hit
+				closestDistance = tNear;
+
+				HitInfo hit;
+				hit.hitPosition = origin + dir * tNear;
+				hit.penetrationDepth = 0.f;
+				hit.normal = glm::vec2(0.f); // Can be calculated based on tNear == tmin.x/y, if needed
+				hit.pHitComponent = agent;
+
+				closestHit = hit;
+			}
+		}
+
+		t += step;
+	}
+
+	return closestHit;
+}
+
+std::optional<HitInfo> SpatialPartitioning::CellSpace::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore)
+{
+	glm::vec2 dir = glm::normalize(direction);
+	glm::vec2 invDir = 1.0f / dir;
+
+	glm::vec2 rayPos = origin;
+	float t = 0.0f;
+	float step = 1.0f;
+
+	std::optional<HitInfo> closestHit;
+	float closestDistance = maxDistance;
+
+	while (t < maxDistance)
+	{
+		glm::vec2 pos = origin + dir * t;
+		int index = PositionToIndex(pos);
+
+		if (index < 0 || index >= static_cast<int>(m_Cells.size()))
+		{
+			t += step;
+			continue;
+		}
+
+		const SpatialPartitioning::Cell& cell = m_Cells[index];
+
+		for (PhysicsComponent* agent : cell.m_pPhysicsAgents)
+		{
+			if (agent == pIgnore) continue;
+
+			const Engine::Rect& rect = agent->GetBoundingBox();
+
+			glm::vec2 min = { rect.x, rect.y };
+			glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
+
+			glm::vec2 t1 = (min - origin) * invDir;
+			glm::vec2 t2 = (max - origin) * invDir;
+
+			glm::vec2 tmin = glm::min(t1, t2);
+			glm::vec2 tmax = glm::max(t1, t2);
+
+			float tNear = std::max(tmin.x, tmin.y);
+			float tFar = std::min(tmax.x, tmax.y);
+
+			if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
+			{
+				closestDistance = tNear;
+
+				HitInfo hit;
+				hit.hitPosition = origin + dir * tNear;
+				hit.penetrationDepth = 0.f;
+				hit.normal = glm::vec2(0.f);
+				hit.pHitComponent = agent;
+
+				closestHit = hit;
+			}
+		}
+
+		t += step;
+	}
+
+	return closestHit;
+}
+
 
 int SpatialPartitioning::CellSpace::PositionToIndex(const glm::vec2& pos) const
 {
@@ -250,4 +376,88 @@ void SimpleSpatialPhysicsSystem::Notify(const Event& event, EventDispatcher*)
 
 		m_pCellSpace->AgentPositionChanged(ctx.gameObject->GetComponent<PhysicsComponent>(), ctx.oldTransform.GetWorldPosition());
 	}
+}
+
+std::optional<HitInfo> SimpleSpatialPhysicsSystem::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance)
+{
+	glm::vec2 dir = glm::normalize(direction);
+	glm::vec2 invDir = 1.0f / dir;
+
+	std::optional<HitInfo> closestHit;
+	float closestDistance = maxDistance;
+
+	for (PhysicsComponent* agent : m_pPhysicsAgents)
+	{
+		const Engine::Rect& rect = agent->GetBoundingBox();
+
+		glm::vec2 min = { rect.x, rect.y };
+		glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
+
+		glm::vec2 t1 = (min - origin) * invDir;
+		glm::vec2 t2 = (max - origin) * invDir;
+
+		glm::vec2 tmin = glm::min(t1, t2);
+		glm::vec2 tmax = glm::max(t1, t2);
+
+		float tNear = std::max(tmin.x, tmin.y);
+		float tFar = std::min(tmax.x, tmax.y);
+
+		if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
+		{
+			closestDistance = tNear;
+
+			HitInfo hit;
+			hit.hitPosition = origin + dir * tNear;
+			hit.penetrationDepth = 0.f;
+			hit.normal = glm::vec2(0.f); // Can be improved if needed
+			hit.pHitComponent = agent;
+
+			closestHit = hit;
+		}
+	}
+
+	return closestHit;
+}
+
+std::optional<HitInfo> SimpleSpatialPhysicsSystem::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore)
+{
+	glm::vec2 dir = glm::normalize(direction);
+	glm::vec2 invDir = 1.0f / dir;
+
+	std::optional<HitInfo> closestHit;
+	float closestDistance = maxDistance;
+
+	for (PhysicsComponent* agent : m_pPhysicsAgents)
+	{
+		if (agent == pIgnore) continue;
+
+		const Engine::Rect& rect = agent->GetBoundingBox();
+
+		glm::vec2 min = { rect.x, rect.y };
+		glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
+
+		glm::vec2 t1 = (min - origin) * invDir;
+		glm::vec2 t2 = (max - origin) * invDir;
+
+		glm::vec2 tmin = glm::min(t1, t2);
+		glm::vec2 tmax = glm::max(t1, t2);
+
+		float tNear = std::max(tmin.x, tmin.y);
+		float tFar = std::min(tmax.x, tmax.y);
+
+		if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
+		{
+			closestDistance = tNear;
+
+			HitInfo hit;
+			hit.hitPosition = origin + dir * tNear;
+			hit.penetrationDepth = 0.f;
+			hit.normal = glm::vec2(0.f);
+			hit.pHitComponent = agent;
+
+			closestHit = hit;
+		}
+	}
+
+	return closestHit;
 }

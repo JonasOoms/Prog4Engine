@@ -45,56 +45,25 @@ void load()
 	ServiceLocator::RegisterPhysicsSystem(std::make_unique<SimpleSpatialPhysicsSystem>((float) dae::Minigin::windowWidth, (float) dae::Minigin::windowHeight));
 
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Level");
-
-	auto go = new dae::GameObject();
+	dae::SceneManager::GetInstance().SelectScene("Level");
+	auto go = std::make_unique<dae::GameObject>();
 	go->AddComponent<RectangleRendererComponent>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight,"Textures/T_CircuitBoard.png");
-	scene.Add(go);
+	scene.Add(std::move(go));
+
+	go = std::make_unique<dae::GameObject>();
+	auto text = go->AddComponent<TextRenderComponent>("FPS: ", "Lingua.otf", 11);
+	go->AddComponent<FPSComponent>(text);
+	scene.Add(std::move(go));     
 
 	JSONLevelLoader loader{};
 	loader.Parse("../Data/Levels/LevelUno.json", scene);
-	
-	//TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 0);
-	//auto playerTankRendererComponent = tank->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png", 40.f, 40.f);
-	//tank->AddComponent<PhysicsComponent>(glm::vec2{ 40.f, 40.f });
-	//auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(200.f);
-	//playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
 
-
-	///*auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
-	//auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);*/
-	//tank->SetPosition(100, 100);
-	//scene.Add(tank);
-
-	//auto playerTankTurretObject = new dae::GameObject();
-	//playerTankTurretObject->AddComponent<TurretComponent>("Textures/T_Turret.png", 60.f, 60.f);
-	//playerTankTurretObject->SetParent(tank, false);
-	//playerTankTurretObject->SetPosition(-8, -8);
-	//scene.Add(playerTankTurretObject);
-
-
-	//auto inputMappingKeyboard = new InputMapping();
-	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_W, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
-	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_D, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
-	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_S, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
-	//inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
-	//dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
-
-
-	//auto inputMapping = new InputMapping();
-	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_UP, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
-	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
-	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
-	//inputMapping->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, new PlayerControllerMoveCommand(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
-	//dae::InputManager::GetInstance().GetPlayerController(0)->AddMapping(inputMapping);
-
+	loader.GetLevel().m_GridObject->GetComponent<GridComponent>()->GetGraphFromGrid();
 
 	auto soundSystem = ServiceLocator::GetSoundSystem();
 	TRONRegistries::GameSoundRegistry.Register("Intro", soundSystem->RegisterAudio("../Data/Sounds/S_Intro.wav"));
 	TRONRegistries::GameSoundRegistry.Register("SFX1", soundSystem->RegisterAudio("../Data/Sounds/S_SFX1.wav"));
 
-	
-
-	
 	soundSystem->Play(TRONRegistries::GameSoundRegistry.Get("Intro"), 128.f);
 	
 }

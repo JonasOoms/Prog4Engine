@@ -21,6 +21,7 @@ public:
 	virtual void Update(float) {};
 	virtual void FixedUpdate(float) {};
 	virtual void LateUpdate(float) {};
+	virtual void DebugDraw() {};
 
 	virtual void ComponentOwnerInitialized() {};
 

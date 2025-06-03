@@ -11,6 +11,11 @@ TankRendererComponent::TankRendererComponent(const std::string& tankTexturePath,
 	SetTexture(tankTexturePath);
 }
 
+void TankRendererComponent::ComponentOwnerInitialized()
+{
+	//GetOwner()->GetGameObjectEventDispatcher()->AddObserver(this);
+}
+
 void TankRendererComponent::Render()
 {
 	dae::Texture2D* texture = GetTexture();
@@ -52,6 +57,30 @@ void TankRendererComponent::Notify(const Event& event , EventDispatcher* )
 			m_Direction = TRONEnums::Direction::Up;
 		}
 
+	} 
+	if (event.eventType == EngineEvents::EVENT_GAMEOBJECT_TRANSFORMCHANGED)
+	{
+		EventContext::GameObjectTransformChangedEventContext context = std::any_cast<EventContext::GameObjectTransformChangedEventContext>(event.eventContext);
+		glm::vec2 movementDelta = context.newTransform.GetWorldPosition() - context.oldTransform.GetWorldPosition();
+		if (glm::length(movementDelta) > 0.5f)
+		{
+			if (movementDelta.x > 0)
+			{
+				m_Direction = TRONEnums::Direction::Right;
+			}
+			else if (movementDelta.x < 0)
+			{
+				m_Direction = TRONEnums::Direction::Left;
+			}
+			else if (movementDelta.y > 0)
+			{
+				m_Direction = TRONEnums::Direction::Down;
+			}
+			else if (movementDelta.y < 0)
+			{
+				m_Direction = TRONEnums::Direction::Up;
+			}
+		}
 	}
 }
 

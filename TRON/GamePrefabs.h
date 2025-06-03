@@ -22,23 +22,24 @@ namespace TRONGameObjects
 	public:
 		inline dae::GameObject* CreatePlayerTank(dae::Scene& scene, int playerId)
 		{
-			auto tank = new dae::GameObject();
+			auto tank = std::make_unique<dae::GameObject>();
+			auto tankPointer = tank.get();
 			auto playerTankRendererComponent = tank->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png", 40.f, 40.f);
 			tank->AddComponent<PhysicsComponent>(glm::vec2{ 40.f, 40.f });
-			auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(200.f);
+			auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(100.f);
 			playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
 
 
 			/*auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
 			auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);*/
 			tank->SetPosition(100, 100);
-			scene.Add(tank);
+			scene.Add(std::move(tank));
 
-			auto playerTankTurretObject = new dae::GameObject();
+			auto playerTankTurretObject = std::make_unique<dae::GameObject>();
 			auto turret = playerTankTurretObject->AddComponent<TurretComponent>("Textures/T_Turret.png", 60.f, 60.f);
-			playerTankTurretObject->SetParent(tank, false);
+			playerTankTurretObject->SetParent(tankPointer, false);
 			playerTankTurretObject->SetPosition(-8, -8);
-			scene.Add(playerTankTurretObject);
+			scene.Add(std::move(playerTankTurretObject));
 
 			if (playerId == 0)
 			{
@@ -63,10 +64,10 @@ namespace TRONGameObjects
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, new ShootCommand(turret, scene, 15, 0.5f));
 			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(inputMappingKeyboard);
 
-			return tank;
+			return tankPointer;
 		} 
 
-		inline dae::GameObject* CreateProjectile(dae::Scene& scene, dae::GameObject* tank, glm::vec2 velocity)
+		inline dae::GameObject* CreateProjectile(dae::Scene& scene, dae::GameObject* tank, const glm::vec2 & velocity)
 		{
 			auto bullet = new dae::GameObject();
 

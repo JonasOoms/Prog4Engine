@@ -10,6 +10,8 @@ public:
 	virtual ~PlayerControllerComponent() = default;
 	virtual void Update(float elapsedSec) override;
 
+
+	void SetMovementInput(const glm::vec2& movementInput);
 	void AddMovementInput(const glm::vec2& movementInput);
 
 	EventDispatcher* GetMovedEvent() const { return m_MovedEvent.get(); }

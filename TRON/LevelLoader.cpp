@@ -5,7 +5,9 @@
 #include "Minigin.h"
 #include "GamePrefabs.h"
 #include "RectangleRenderer.h"
+#include "GridPathRenderer.h"
 #include "glm.hpp"
+#include "AITankComponent.h"
 
 using json = nlohmann::json;
 
@@ -29,7 +31,6 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 
 		float collisionTileWidth = dae::Minigin::windowWidth / 30.f;
 		float collisionTileHeight = dae::Minigin::windowHeight / 30.f;
-
 		if (levelJson.contains("collission_tiles") && levelJson["collission_tiles"].is_array()) {
 		
 			for (const auto& tile : levelJson["collission_tiles"]) {
@@ -42,6 +43,7 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 				gridComponent->InsertAndParent(gameobject, x, y);
 			}
 
+
 			int numFillTiles = (30*30)-int(levelJson["collission_tiles"].size());
 			for (int fillTile{}; fillTile < numFillTiles; ++fillTile)
 			{
@@ -53,6 +55,10 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 
 		}
 
+		dae::GameObject* gridPathObject = new dae::GameObject();
+		gridPathObject->AddComponent<GridPathRenderComponent>(gridComponent);
+		scene.Add(gridPathObject);
+
 		if (levelJson.contains("player_spawnpoint"))
 		{
 			auto spawnpoint = levelJson["player_spawnpoint"];
@@ -62,6 +68,22 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 			level.m_Player->SetPosition(positionInWorld.x, positionInWorld.y);
 
 		}
+
+		if (levelJson.contains("enemy_tanks") && levelJson["enemy_tanks"].is_array())
+		{
+			for (const auto& spawnpoint : levelJson["enemy_tanks"])
+			{
+				dae::GameObject* enemy = new dae::GameObject();
+				enemy->AddComponent<PhysicsComponent>(glm::vec2{ 40.f,40.f });
+				enemy->AddComponent<AITankComponent>(gridComponent, level.m_Player, 30.f);
+				auto renderer  = enemy->AddComponent<TankRendererComponent>("Textures/T_EnemyTank.png", 40.f, 40.f);
+				enemy->GetGameObjectEventDispatcher()->AddObserver(renderer);
+				glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));
+				enemy->SetPosition(positionInWorld.x, positionInWorld.y);
+				scene.Add(enemy);
+			}
+		}
+
 
 		m_Level = level;
 

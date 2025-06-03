@@ -27,6 +27,12 @@ void PlayerControllerComponent::Update(float elapsedSec)
 	}
 }
 
+void PlayerControllerComponent::SetMovementInput(const glm::vec2& movementInput)
+{
+	m_MovementInput = movementInput;
+	m_IsDirty = true;
+}
+
 void PlayerControllerComponent::AddMovementInput(const glm::vec2& movementInput)
 {
 	m_MovementInput += movementInput;

@@ -3,6 +3,7 @@
 #include "PhysicsSystem.h"
 #include "Observer.h"
 #include <list>
+#include <optional>
 
 namespace SpatialPartitioning
 {
@@ -36,6 +37,8 @@ namespace SpatialPartitioning
 
 		void RenderCells() const;
 
+		std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance = 1000.f);
+		std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore);
 	private:
 		// Cells and properties
 		std::vector<Cell> m_Cells;
@@ -77,6 +80,11 @@ private:
 	float m_NeighborHoodRange{ 150.f };
 
 	// Inherited via Observer
+
+
+	// Inherited via PhysicsSystem
+	std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance) override;
+	std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore);
 
 };
 

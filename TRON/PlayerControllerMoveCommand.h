@@ -14,7 +14,7 @@ public:
 
 	virtual void Execute() override
 	{
-		m_pPlayerControllerLink->AddMovementInput(m_MovementInput);
+		m_pPlayerControllerLink->SetMovementInput(m_MovementInput);
 	}
 private:
 	glm::vec2 m_MovementInput;
