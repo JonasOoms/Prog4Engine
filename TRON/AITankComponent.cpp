@@ -9,10 +9,10 @@
 #include "Minigin.h"
 
 
-AITankComponent::AITankComponent(GridComponent* gridComponent, dae::GameObject* target, float Speed) :
+AITankComponent::AITankComponent(GridComponent* gridComponent, std::vector<dae::GameObject*>* target, float tankSpeed) :
 	m_Grid{ gridComponent },
 	m_Target{ target },
-	m_Speed{ Speed }
+	m_Speed{ tankSpeed }
 {
 	m_State = std::make_unique<TankPatrolState>();
 	m_EventDispatcher = std::make_unique<EventDispatcher>();
@@ -21,18 +21,25 @@ AITankComponent::AITankComponent(GridComponent* gridComponent, dae::GameObject* 
 void AITankComponent::ComponentOwnerInitialized()
 {
 	m_MoveCommand = std::make_unique<SimpleMoveCommand>(GetOwner(), glm::vec2{ -1,0 }, m_Speed);
+	m_IsReady = true;
 }
 
 void AITankComponent::Update(float ds)
 {
-	if (auto newState = m_State->Update(*this, ds)) {
-		m_State = std::move(newState);
+	if (m_IsReady)
+	{
+		if (auto newState = m_State->Update(*this, ds)) {
+			m_State = std::move(newState);
+		}
 	}
 }
 
 void AITankComponent::DebugDraw()
 {
-	m_State->DebugDraw(*this);
+	if (m_IsReady)
+	{
+		m_State->DebugDraw(*this);
+	}
 }
 
 EventDispatcher* AITankComponent::GetAITankEvent()
@@ -41,25 +48,33 @@ EventDispatcher* AITankComponent::GetAITankEvent()
 }
 
 
-std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComponent, float dt)
+std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComponent, float)
 {
 
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
 	// Step 1: Racyast to player. If hit, continue to shooting state. 
 
 	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
-	PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget()->GetComponent<PhysicsComponent>();
-
-	assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
-	assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
-
-	std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
-
-	if (optHitInfo.has_value())
+	
+	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
-		if (optHitInfo->pHitComponent == targetPhysicsComponent)
+		dae::GameObject* player = AiTankComponent.GetTarget(playerIndex);
+		if (player)
 		{
-			return std::make_unique<TankEngageState>();
+			PhysicsComponent* targetPhysicsComponent = player->GetComponent<PhysicsComponent>();
+
+			assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
+			assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
+
+			std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
+
+			if (optHitInfo.has_value())
+			{
+				if (optHitInfo->pHitComponent == targetPhysicsComponent)
+				{
+					return std::make_unique<TankEngageState>();
+				}
+			}
 		}
 	}
 
@@ -97,8 +112,12 @@ std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComp
 		{
 			glm::vec2 currentPosition = AiTankComponent.GetOwner()->GetPosition();
 			glm::vec2 targetPosition = m_SelectedTravelPoint->worldPosition;
-			glm::vec2 delta = glm::normalize(targetPosition - currentPosition)*AiTankComponent.GetSpeed() * dt;
-			AiTankComponent.GetOwner()->SetPosition(currentPosition.x + delta.x, currentPosition.y + delta.y);
+			glm::vec2 delta = glm::normalize(targetPosition - currentPosition);
+			
+			SimpleMoveCommand* moveCommand = AiTankComponent.GetMoveCommand();
+			moveCommand->SetMovementVector(delta);
+			moveCommand->Execute();
+			
 
 			TRONEvents::EventContexts::PlayerMoveEventContext context{};
 			context.movementDelta = delta;
@@ -138,15 +157,18 @@ void TankPatrolState::DebugDraw(AITankComponent& AiTankComponent)
 	}
 
 	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
-	PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget()->GetComponent<PhysicsComponent>();
+	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
+	{
+		PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget(playerIndex)->GetComponent<PhysicsComponent>();
 
-	assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
-	assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
+		assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
+		assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
 
-	glm::vec2 position = physicsComponent->GetPosition();
-	glm::vec2 target = targetPhysicsComponent->GetPosition();
-	glm::vec2 delta = position + glm::normalize(target - position) * 200.f;
-	renderer.drawLine(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(delta.x), static_cast<int>(delta.y), SDL_Color{ 255, 0, 0, 255 });
+		glm::vec2 position = physicsComponent->GetPosition();
+		glm::vec2 target = targetPhysicsComponent->GetPosition();
+		glm::vec2 delta = position + glm::normalize(target - position) * 200.f;
+		renderer.drawLine(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(delta.x), static_cast<int>(delta.y), SDL_Color{ 255, 0, 0, 255 });
+	}
 
 }
 
@@ -163,21 +185,26 @@ std::unique_ptr<AITankState> TankEngageState::Update(AITankComponent& AiTankComp
 	// Step 1. Check if I can see the player
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
 	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
-	PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget()->GetComponent<PhysicsComponent>();
-
-	assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
-	assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
-
-	std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
-
-	if (optHitInfo.has_value())
+	
+	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
-		if (optHitInfo->pHitComponent == targetPhysicsComponent)
+		PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget(playerIndex)->GetComponent<PhysicsComponent>();
+
+		assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
+		assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
+
+		std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
+
+		if (optHitInfo.has_value())
 		{
-			return nullptr;
+			if (optHitInfo->pHitComponent == targetPhysicsComponent)
+			{
+				return nullptr;
+			}
 		}
+		// Step 2. Shoot at the player.
+		
 	}
-	// Step 2. Shoot at the player.
 	return std::make_unique<TankPatrolState>();
 }
 
@@ -185,15 +212,19 @@ void TankEngageState::DebugDraw(AITankComponent& AiTankComponent)
 {
 	dae::Renderer& renderer = dae::Renderer::GetInstance();
 	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
-	PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget()->GetComponent<PhysicsComponent>();
+	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
+	{
+		dae::GameObject* player = AiTankComponent.GetTarget(playerIndex);
+		PhysicsComponent* targetPhysicsComponent = player->GetComponent<PhysicsComponent>();
 
-	assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
-	assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
+		assert(physicsComponent && "The enemy tank must have a PhysicsComponent!");
+		assert(targetPhysicsComponent && "The player tank must have a PhysicsComponent!");
 
-	glm::vec2 position = physicsComponent->GetPosition();
-	glm::vec2 target = targetPhysicsComponent->GetPosition();
-	glm::vec2 delta = position + glm::normalize(target - position) *200.f;
-	renderer.drawLine(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(delta.x), static_cast<int>(delta.y), SDL_Color{255, 255, 0, 255 });
+		glm::vec2 position = physicsComponent->GetPosition();
+		glm::vec2 target = targetPhysicsComponent->GetPosition();
+		glm::vec2 delta = position + glm::normalize(target - position) * 200.f;
+		renderer.drawLine(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(delta.x), static_cast<int>(delta.y), SDL_Color{ 255, 255, 0, 255 });
+	}
 
 	//std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
 }

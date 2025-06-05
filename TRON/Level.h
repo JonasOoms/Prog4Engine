@@ -4,7 +4,7 @@
 struct Level
 {
 public:
-	dae::GameObject* m_Player;
+	std::vector<dae::GameObject*> m_Players;
 	dae::GameObject* m_GridObject;
 	std::vector<dae::GameObject*> m_CollisionTiles;
 	std::vector<dae::GameObject*> m_Enemies;

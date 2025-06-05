@@ -63,9 +63,10 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 		{
 			auto spawnpoint = levelJson["player_spawnpoint"];
 
-			level.m_Player = TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 0);
+			dae::GameObject* player = TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 0);
 			glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));
-			level.m_Player->SetPosition(positionInWorld.x, positionInWorld.y);
+			player->SetPosition(positionInWorld.x, positionInWorld.y);
+			level.m_Players.emplace_back(player);
 
 		}
 
@@ -75,7 +76,7 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 			{
 				dae::GameObject* enemy = new dae::GameObject();
 				enemy->AddComponent<PhysicsComponent>(glm::vec2{ 40.f,40.f });
-				enemy->AddComponent<AITankComponent>(gridComponent, level.m_Player, 30.f);
+				enemy->AddComponent<AITankComponent>(gridComponent, &level.m_Players, 30.f);
 				auto renderer  = enemy->AddComponent<TankRendererComponent>("Textures/T_EnemyTank.png", 40.f, 40.f);
 				enemy->GetGameObjectEventDispatcher()->AddObserver(renderer);
 				glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));

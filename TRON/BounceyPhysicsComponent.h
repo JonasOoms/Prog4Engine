@@ -47,5 +47,5 @@ public:
 	std::unique_ptr<BulletState> Update(BounceyPhysicsComponent& bullet, float dt) override;
 	std::unique_ptr<BulletState> OnCollision(BounceyPhysicsComponent&, float, PhysicsComponent&, dae::GameObject&, const HitInfo&) override { return nullptr; };
 private:
-	float m_ExplosionCountdown{ 5.0f };
+	float m_ExplosionCountdown{ .1f };
 };

@@ -165,6 +165,7 @@
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
+    <ClCompile Include="RenderComponentEx.cpp" />
     <ClCompile Include="ShootCommand.cpp" />
     <ClCompile Include="SimpleMoveCommand.cpp" />
     <ClCompile Include="TankPhysicsComponent.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
     <ClInclude Include="RectangleRenderer.h" />
+    <ClInclude Include="RenderComponentEx.h" />
     <ClInclude Include="ShootCommand.h" />
     <ClInclude Include="SimpleMoveCommand.h" />
     <ClInclude Include="TankPhysicsComponent.h" />

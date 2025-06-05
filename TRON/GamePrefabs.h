@@ -13,6 +13,7 @@
 #include "InputManager.h"
 #include "TurretAngleChangeCommand.h"
 #include "BounceyPhysicsComponent.h"
+#include "RenderComponentEx.h"
 #include "ShootCommand.h"
 
 namespace TRONGameObjects
@@ -29,9 +30,6 @@ namespace TRONGameObjects
 			auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(100.f);
 			playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
 
-
-			/*auto keyboardCharacterLives = keyboardCharacterObject->AddComponent<ValueComponent<int>>(3);
-			auto keyboardCharacterPoints = keyboardCharacterObject->AddComponent<ValueComponent<int>>(0);*/
 			tank->SetPosition(100, 100);
 			scene.Add(std::move(tank));
 
@@ -72,6 +70,8 @@ namespace TRONGameObjects
 			auto bullet = new dae::GameObject();
 
 			bullet->AddComponent<BounceyPhysicsComponent>(glm::vec2{ 20.f,20.f }, velocity, tank);
+			auto renderComponent = bullet->AddComponent<RenderComponentEx>(20.f, 20.f);
+			renderComponent->SetTexture("Textures/T_PlayerBullet.png");
 			glm::vec2 pos = tank->GetComponent<PhysicsComponent>()->GetPosition();
 			bullet->SetPosition(pos.x, pos.y);
 			scene.Add(bullet);

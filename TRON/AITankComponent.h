@@ -11,13 +11,17 @@ class TankPatrolState;
 class AITankComponent : public Component
 {
 public:
-	AITankComponent(GridComponent* gridComponent, dae::GameObject* target, float tankSpeed);
+	AITankComponent(GridComponent* gridComponent, std::vector<dae::GameObject*>* target, float tankSpeed);
 
+	void ComponentOwnerInitialized() override;
 	virtual void Update(float) override;
 	virtual void DebugDraw() override;
 
+	SimpleMoveCommand* GetMoveCommand() { return m_MoveCommand.get();}
+
 	GridComponent* GetGridComponent() { return m_Grid; }
-	dae::GameObject* GetTarget() { return m_Target; }
+	dae::GameObject* GetTarget(int index) { return m_Target->at(index); }
+	size_t GetTargetCount() { return m_Target->size(); }
 	float GetSpeed() { return m_Speed; }
 	EventDispatcher* GetAITankEvent();
 private:
@@ -26,7 +30,8 @@ private:
 	std::unique_ptr<EventDispatcher> m_EventDispatcher;
 	float m_Speed;
 	GridComponent* m_Grid;
-	dae::GameObject* m_Target;
+	std::vector<dae::GameObject*>* m_Target;
+	bool m_IsReady{ false };
 };
 
 class AITankState
@@ -56,6 +61,4 @@ public:
 	TankEngageState() = default;
 	virtual std::unique_ptr<AITankState> Update(AITankComponent& AiTankComponent, float ds) override;
 	virtual void DebugDraw(AITankComponent& AiTankComponent) override;
-private:
-
 };

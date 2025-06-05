@@ -71,7 +71,5 @@ void load()
 int main(int, char* []) {
 	dae::Minigin engine("../Data/");
 	engine.Run(load);
-	// enable for steam support
-	//SteamAPI_Shutdown();
 	return 0;
 }
