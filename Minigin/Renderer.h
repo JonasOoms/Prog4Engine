@@ -4,6 +4,9 @@
 #include <glm.hpp>
 #include <vector>
 #include "ResourceManager.h"
+#include "EngineStructs.h"
+
+
 namespace dae
 {
 	class Texture2D;
@@ -27,6 +30,7 @@ namespace dae
 
 		void DrawString(const std::string& text, Font* pFont, const glm::vec2& position, SDL_Color color, float size = 12.f) const;
 		void DrawSquare(int x, int y, int size, SDL_Color color);
+		void DrawRect(Engine::Rect, SDL_Color color);
 		void DrawPolygon(const std::vector<glm::vec2>& points, SDL_Color color);
 		void drawLine(int x1, int y1, int x2, int y2, SDL_Color color);
 		void DrawPoint(int x, int y, SDL_Color);

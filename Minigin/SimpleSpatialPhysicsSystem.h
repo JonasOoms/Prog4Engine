@@ -32,6 +32,8 @@ namespace SpatialPartitioning
 		const std::vector<PhysicsComponent*>& GetNeighbors() const { return m_Neighbors; }
 		int GetNrOfNeighbors() const { return m_NrOfNeighbors; }
 
+		//bool IsAgentInCell(const Cell& cell, PhysicsComponent* agent) const;
+
 		//empties the cells of entities
 		void EmptyCells();
 
@@ -60,6 +62,7 @@ namespace SpatialPartitioning
 
 		// Helper functions
 		int PositionToIndex(const glm::vec2& pos) const;
+
 	};
 
 }
@@ -77,7 +80,7 @@ public:
 private:
 	std::unique_ptr<SpatialPartitioning::CellSpace> m_pCellSpace;
 	std::vector<PhysicsComponent*> m_pPhysicsAgents;
-	float m_NeighborHoodRange{ 150.f };
+	float m_NeighborHoodRange{ 300.f };
 
 	// Inherited via Observer
 

@@ -33,7 +33,7 @@ std::vector<glm::vec2> SpatialPartitioning::Cell::GetRectPoints() const
 
 // ------ CellSpace -----
 
-SpatialPartitioning::CellSpace::CellSpace(float width, float height, int rows, int cols):
+SpatialPartitioning::CellSpace::CellSpace(float width, float height, int rows, int cols) :
 	m_SpaceWidth(width),
 	m_SpaceHeight(height),
 	m_NrOfRows(rows),
@@ -75,7 +75,7 @@ void SpatialPartitioning::CellSpace::AgentPositionChanged(PhysicsComponent* cons
 {
 	const int oldIndex = PositionToIndex(oldPos);
 	const int newIndex = PositionToIndex(agent->GetOwner()->GetTransform().GetWorldPosition());
-	
+
 	if (newIndex == oldIndex) return;
 
 
@@ -179,13 +179,12 @@ std::optional<HitInfo> SpatialPartitioning::CellSpace::Raycast(const glm::vec2& 
 
 			if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
 			{
-				// We have a hit
 				closestDistance = tNear;
 
 				HitInfo hit;
 				hit.hitPosition = origin + dir * tNear;
 				hit.penetrationDepth = 0.f;
-				hit.normal = glm::vec2(0.f); // Can be calculated based on tNear == tmin.x/y, if needed
+				hit.normal = glm::vec2(0.f);
 				hit.pHitComponent = agent;
 
 				closestHit = hit;
@@ -274,12 +273,12 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 	for (auto& agent : m_pPhysicsAgents)
 	{
 		m_pCellSpace->RegisterNeighbors(agent, m_NeighborHoodRange);
-	
+
 		for (int neighborIndex{}; neighborIndex < m_pCellSpace->GetNeighbors().size(); ++neighborIndex)
 		{
 			PhysicsComponent* pNeighbor = m_pCellSpace->GetNeighbors()[neighborIndex];
 			if (pNeighbor == agent) continue;
-			
+
 			if (Engine::CheckAABBCollision(agent->GetBoundingBox(), pNeighbor->GetBoundingBox()))
 			{
 				const Engine::Rect& rectA = agent->GetBoundingBox();
@@ -295,7 +294,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 				glm::vec2 combinedHalfSize = halfSizeA + halfSizeB;
 				glm::vec2 overlap = combinedHalfSize - glm::abs(delta);
 
-				if (overlap.x > 0 && overlap.y > 0) 
+				if (overlap.x > 0 && overlap.y > 0)
 				{
 					HitInfo hitInfo;
 
@@ -310,7 +309,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 						hitInfo.normal = (delta.y < 0) ? glm::vec2(0, -1) : glm::vec2(0, 1);
 					}
 
-					hitInfo.hitPosition = centerA; 
+					hitInfo.hitPosition = centerA;
 					agent->OnCollide(fixedTime, *pNeighbor, *pNeighbor->GetOwner(), hitInfo);
 				}
 			}
@@ -328,12 +327,12 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 void SimpleSpatialPhysicsSystem::RegisterPhysicsComponent(PhysicsComponent* pPhysicsComponent)
 {
 	if (pPhysicsComponent == nullptr) return;
-	
+
 	auto it = std::find(m_pPhysicsAgents.begin(), m_pPhysicsAgents.end(), pPhysicsComponent);
 	if (it != m_pPhysicsAgents.end()) return;
 
 	pPhysicsComponent->GetOwner()->GetGameObjectEventDispatcher()->AddObserver(this);
-	m_pPhysicsAgents.emplace_back(pPhysicsComponent);	
+	m_pPhysicsAgents.emplace_back(pPhysicsComponent);
 	m_pCellSpace->AddAgent(pPhysicsComponent);
 
 
@@ -363,9 +362,9 @@ void SimpleSpatialPhysicsSystem::DebugDraw()
 	//m_pCellSpace->RenderCells();
 	for (const auto& agent : m_pPhysicsAgents)
 	{
-		
+
 		Engine::Rect box = agent->GetBoundingBox();
-		dae::Renderer::GetInstance().DrawSquare((int) box.x, (int) box.y, (int) agent->GetWidth(), {0, 255, 0, 255});
+		dae::Renderer::GetInstance().DrawRect(box, { 0, 255, 0, 255 });
 
 		glm::vec2 pos = agent->GetOwner()->GetTransform().GetWorldPosition();
 	}

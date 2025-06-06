@@ -133,27 +133,33 @@ void dae::Renderer::DrawSquare(int x, int y, int size, SDL_Color color)
 	SDL_RenderDrawRect(GetSDLRenderer(), &square);
 }
 
+void dae::Renderer::DrawRect(Engine::Rect rect, SDL_Color color)
+{
+	SDL_SetRenderDrawColor(GetSDLRenderer(), color.r, color.g, color.b, color.a);
+	SDL_Rect square = { static_cast<int>(rect.x), static_cast<int>(rect.y), static_cast<int>(rect.width), static_cast<int>(rect.height) };
+	SDL_RenderDrawRect(GetSDLRenderer(), &square);
+}
+
 void dae::Renderer::DrawPolygon(const std::vector<glm::vec2>& points, SDL_Color color)
 {
 		// Set the color
 		SDL_SetRenderDrawColor(GetSDLRenderer(), color.r, color.g, color.b, color.a);
 
 		std::vector<SDL_Point> sdlPoints;
-		sdlPoints.reserve(points.size());  // Reserve memory for efficiency
+		sdlPoints.reserve(points.size()); 
 
 		for (const glm::vec2& glmPoint : points)
 		{
 			SDL_Point sdlPoint;
-			sdlPoint.x = static_cast<int>(glmPoint.x);  // Cast to int
-			sdlPoint.y = static_cast<int>(glmPoint.y);  // Cast to int
+			sdlPoint.x = static_cast<int>(glmPoint.x);  
+			sdlPoint.y = static_cast<int>(glmPoint.y);  
 			sdlPoints.push_back(sdlPoint);
 		}
 
 
-		// Draw the lines connecting the points
+		
 		SDL_RenderDrawLines(GetSDLRenderer(), sdlPoints.data(),(int) sdlPoints.size());
 
-		// Connect the last point back to the first to close the polygon
 		SDL_RenderDrawLine(GetSDLRenderer(), (int) points[sdlPoints.size() - 1].x, (int) points[sdlPoints.size() - 1].y, (int) points[0].x, (int) points[0].y);
 }
 

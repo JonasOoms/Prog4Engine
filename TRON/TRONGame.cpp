@@ -91,15 +91,8 @@ void TRONGame::LoadMainMenu()
 	scene.Add(std::move(go));
 
 	go = std::make_unique<dae::GameObject>();
-	go->AddComponent<GameModeSelectorLoadingComponent>();
+	go->AddComponent<GameModeSelectorLoadingComponent>(this);
 	scene.Add(std::move(go));
-
-	
-	go = std::make_unique<dae::GameObject>();
-	go->AddComponent<PhysicsComponent>(glm::vec2{ 200 ,10 })->SetIsStatic(true);
-	scene.Add(std::move(go));
-
-
 	
 	
 }
@@ -152,4 +145,10 @@ void TRONGame::Load()
 std::string_view TRONGame::GetGameTitle()
 {
 	return "TRON Arcade - Ooms Jonas 2GD11";
+}
+
+void TRONGame::ChangeGameMode(GameMode gamemode)
+{
+	assert(!m_IsInLevel && "You cannot change gamemode inside of the level!");
+	m_SelectedGameMode = gamemode;
 }

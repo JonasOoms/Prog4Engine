@@ -32,7 +32,7 @@ public:
 	void PollInputMapping(const SDL_Event& event);
 
 	template<CommandType T>
-	void AddInputBinding(unsigned int button, TriggerType triggertype, T* command);
+	void AddInputBinding(unsigned int button, TriggerType triggertype, std::unique_ptr<T> command);
 
 private:
 	std::vector<InputBinding> m_InputBindings;
@@ -40,7 +40,7 @@ private:
 
 
 template<CommandType T>
-inline void InputMapping::AddInputBinding(unsigned int button, TriggerType triggertype, T* command)
+inline void InputMapping::AddInputBinding(unsigned int button, TriggerType triggertype, std::unique_ptr<T> command)
 { 
-	m_InputBindings.emplace_back(button, triggertype, std::unique_ptr<T>(command));
+	m_InputBindings.emplace_back(button, triggertype, std::move(command));
 };

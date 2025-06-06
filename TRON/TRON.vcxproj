@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AchievementObserver.cpp" />
+    <ClCompile Include="ActivationBoxComponent.cpp" />
     <ClCompile Include="AITankComponent.cpp" />
     <ClCompile Include="BounceyPhysicsComponent.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h" />
+    <ClInclude Include="ActivationBoxComponent.h" />
     <ClInclude Include="AITankComponent.h" />
     <ClInclude Include="BounceyPhysicsComponent.h" />
     <ClInclude Include="FPSComponent.h" />
