@@ -4,25 +4,27 @@
 
 void dae::SceneManager::Update(float deltaTime)
 {
-	
+	if (!m_SelectedScene) return;
 	m_SelectedScene->Update(deltaTime);
 	ServiceLocator::GetPhysicsSystem()->PhysicsUpdate(deltaTime);
 }
 
 void dae::SceneManager::FixedUpdate(float fixedTime)
 {
+	if (!m_SelectedScene) return;
 	m_SelectedScene->FixedUpdate(fixedTime);
 }
 
 void dae::SceneManager::LateUpdate(float deltaTime)
 {
+	if (!m_SelectedScene) return;
 	m_SelectedScene->LateUpdate(deltaTime);
 }
 
 void dae::SceneManager::Render()
 {
 
-
+	if (!m_SelectedScene) return;
 
 	
 	m_SelectedScene->Render();
@@ -48,7 +50,12 @@ void dae::SceneManager::SelectScene(std::string_view name)
 
 	if (it != m_scenes.end())
 	{
+		if (m_SelectedScene)
+		{
+			m_SelectedScene->ExitScene();
+		}
 		m_SelectedScene = (*it).get();
+		m_SelectedScene->EnterScene();
 	}
 	else
 	{

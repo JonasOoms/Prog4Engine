@@ -13,7 +13,7 @@ public:
 
 	void SetText(const std::string& text);
 	void SetFont(const std::string& fontPath, int size);
-
+	void SetColor(const SDL_Color& color);
 
 
 private:

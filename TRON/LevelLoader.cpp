@@ -11,10 +11,10 @@
 
 using json = nlohmann::json;
 
-void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
+std::unique_ptr<Level> JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 {
-
-		Level level{};
+		
+		std::unique_ptr<Level> level = std::make_unique<Level>();
 
 		std::filesystem::path path{ filePath };
 		std::ifstream file{ path };
@@ -26,8 +26,8 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 
 		dae::GameObject* gridObject = new dae::GameObject();
 		GridComponent* gridComponent = gridObject->AddComponent<GridComponent>(static_cast<float>(dae::Minigin::windowWidth), static_cast<float>(dae::Minigin::windowHeight), 30, 30);
-		level.m_GridObject = gridObject;
-		scene.Add(level.m_GridObject);
+		level->m_GridObject = gridObject;
+		scene.Add(level->m_GridObject);
 
 		float collisionTileWidth = dae::Minigin::windowWidth / 30.f;
 		float collisionTileHeight = dae::Minigin::windowHeight / 30.f;
@@ -66,7 +66,7 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 			dae::GameObject* player = TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 0);
 			glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));
 			player->SetPosition(positionInWorld.x, positionInWorld.y);
-			level.m_Players.emplace_back(player);
+			level->m_Players.emplace_back(player);
 
 		}
 
@@ -76,7 +76,7 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 			{
 				dae::GameObject* enemy = new dae::GameObject();
 				enemy->AddComponent<PhysicsComponent>(glm::vec2{ 40.f,40.f });
-				enemy->AddComponent<AITankComponent>(gridComponent, &level.m_Players, 30.f);
+				enemy->AddComponent<AITankComponent>(gridComponent, &level->m_Players, 30.f);
 				auto renderer  = enemy->AddComponent<TankRendererComponent>("Textures/T_EnemyTank.png", 40.f, 40.f);
 				enemy->GetGameObjectEventDispatcher()->AddObserver(renderer);
 				glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));
@@ -86,6 +86,6 @@ void JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 		}
 
 
-		m_Level = level;
+		return level;
 
 }

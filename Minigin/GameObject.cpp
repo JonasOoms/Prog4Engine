@@ -12,6 +12,22 @@ dae::GameObject::GameObject():
 
 dae::GameObject::~GameObject() = default;
 
+void dae::GameObject::EndPlay()
+{
+	for (const auto& component : m_Components)
+	{
+		component->EndPlay();
+	}
+}
+
+void dae::GameObject::BeginPlay()
+{
+	for (const auto& component : m_Components)
+	{
+		component->BeginPlay();
+	}
+}
+
 void dae::GameObject::Update(float deltaTime) {
 	for (const auto& component : m_Components)
 	{
@@ -128,6 +144,10 @@ void dae::GameObject::AddChild(GameObject* object, bool sendEvent)
 void dae::GameObject::Destroy()
 {
 	m_DeleteFlag = true;
+	for (dae::GameObject* child : m_Children)
+	{
+		child->m_DeleteFlag = true;
+	}
 }
 
 bool dae::GameObject::GetDeleteFlag()

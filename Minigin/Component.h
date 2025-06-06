@@ -18,6 +18,14 @@ public:
 	void DeleteComponent();
 	bool IsFlaggedForDelete() const { return m_DeleteFlag; }
 
+	/// <summary>
+	/// Is called once when a scene stops being selected. Useful for taking care of resources that are no longer needed.
+	/// </summary>
+	virtual void EndPlay() {};
+	/// <summary>
+	/// Is called once when a scene is selected. Useful to create resources when a scene starts up.
+	/// </summary>
+	virtual void BeginPlay() {};
 	virtual void Update(float) {};
 	virtual void FixedUpdate(float) {};
 	virtual void LateUpdate(float) {};
@@ -25,13 +33,11 @@ public:
 
 	virtual void ComponentOwnerInitialized() {};
 
-	// TODO: Dangerous! Make private then friend class the gameobject
 	dae::GameObject* GetOwner() const;
 
 	//maybe not a good idea to use friend
 	friend class dae::GameObject;
 protected:
-	// TODO: Add friend clas to gameobject
 	Component();
 private:
 	void SetOwner(dae::GameObject* owner);

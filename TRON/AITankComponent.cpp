@@ -7,7 +7,8 @@
 #include "Graph.h"
 #include "Renderer.h"
 #include "Minigin.h"
-
+#include "SoundSystem.h"
+#include "GameRegistries.h"
 
 AITankComponent::AITankComponent(GridComponent* gridComponent, std::vector<dae::GameObject*>* target, float tankSpeed) :
 	m_Grid{ gridComponent },
@@ -45,6 +46,21 @@ void AITankComponent::DebugDraw()
 EventDispatcher* AITankComponent::GetAITankEvent()
 {
 	return m_EventDispatcher.get();
+}
+
+void AITankComponent::Hurt(int damage)
+{
+	m_HitPoints -= damage;
+	if (m_HitPoints <= 0)
+	{
+		ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("Explosion"), 20.f);
+		GetOwner()->Destroy();
+	}
+}
+
+int AITankComponent::GetHealth()
+{
+	return m_HitPoints;
 }
 
 

@@ -4,11 +4,12 @@
 #include "Event.h"
 #include "GameEvents.h"
 #include "SimpleMoveCommand.h"
+#include "IEnemy.h"
 
 class AITankState;
 class TankPatrolState;
 
-class AITankComponent : public Component
+class AITankComponent : public Component, public IEnemyHandlerComponent
 {
 public:
 	AITankComponent(GridComponent* gridComponent, std::vector<dae::GameObject*>* target, float tankSpeed);
@@ -18,6 +19,8 @@ public:
 	virtual void DebugDraw() override;
 
 	SimpleMoveCommand* GetMoveCommand() { return m_MoveCommand.get();}
+
+
 
 	GridComponent* GetGridComponent() { return m_Grid; }
 	dae::GameObject* GetTarget(int index) { return m_Target->at(index); }
@@ -31,7 +34,12 @@ private:
 	float m_Speed;
 	GridComponent* m_Grid;
 	std::vector<dae::GameObject*>* m_Target;
+	int m_HitPoints{ 5 };
 	bool m_IsReady{ false };
+
+	// Inherited via IEnemyHandlerComponent
+	void Hurt(int damage) override;
+	int GetHealth() override;
 };
 
 class AITankState

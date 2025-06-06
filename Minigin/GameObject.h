@@ -13,6 +13,8 @@ namespace dae
 	{
 	public:
 
+		void EndPlay();
+		void BeginPlay();
 		void Update(float deltaTime);
 		void FixedUpdate(float fixedTime);
 		void LateUpdate(float deltaTime);

@@ -15,6 +15,16 @@ PhysicsComponent::~PhysicsComponent()
 	ServiceLocator::GetPhysicsSystem()->UnregisterPhysicsComponent(this);
 }
 
+void PhysicsComponent::BeginPlay()
+{
+	ServiceLocator::GetPhysicsSystem()->RegisterPhysicsComponent(this);
+}
+
+void PhysicsComponent::EndPlay()
+{
+	ServiceLocator::GetPhysicsSystem()->UnregisterPhysicsComponent(this);
+}
+
 void PhysicsComponent::ComponentOwnerInitialized()
 {
 	// Register with the physics system

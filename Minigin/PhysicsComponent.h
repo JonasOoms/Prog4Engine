@@ -14,7 +14,8 @@ public:
 	PhysicsComponent(const glm::vec2& size);
 	~PhysicsComponent() override;
 
-
+	virtual void BeginPlay() override;
+	virtual void EndPlay() override;
 	virtual void ComponentOwnerInitialized() override;
 
 	/// <summary>

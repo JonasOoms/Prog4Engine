@@ -2,7 +2,8 @@
 #include <SDL.h>
 #include <string>
 #include <functional>
-
+#include <memory>
+#include "IGame.h"
 
 namespace dae
 {
@@ -11,7 +12,7 @@ namespace dae
 	public:
 		explicit Minigin(const std::string& dataPath);
 		~Minigin();
-		void Run(const std::function<void()>& load);
+		void Run(std::unique_ptr<IGame> game);
 
 		Minigin(const Minigin& other) = delete;
 		Minigin(Minigin&& other) = delete;
@@ -33,5 +34,8 @@ namespace dae
 		static bool doContinue;
 	private:
 		static float m_DeltaTime;
+
+		std::unique_ptr<IGame> m_Game;
+
 	};
 }

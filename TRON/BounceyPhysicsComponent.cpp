@@ -1,5 +1,6 @@
 #include "BounceyPhysicsComponent.h"
 #include "PhysicsSystem.h"
+#include "IEnemy.h"
 #include <memory>
 
 
@@ -57,6 +58,11 @@ std::unique_ptr<BulletState> FlyingState::OnCollision(BounceyPhysicsComponent& b
 				}
 			}
 		}
+	}
+	if (IEnemyHandlerComponent* enemy = gameObject.GetComponent<IEnemyHandlerComponent>())
+	{
+		bullet.GetOwner()->Destroy();
+		enemy->Hurt(1);
 	}
 	return nullptr;
 }

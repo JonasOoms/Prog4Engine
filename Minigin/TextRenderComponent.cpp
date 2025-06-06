@@ -46,5 +46,12 @@ void TextRenderComponent::SetText(const std::string& text)
 void TextRenderComponent::SetFont(const std::string& fontPath, int size)
 {
 	m_pFont = dae::ResourceManager::GetInstance().LoadFont(fontPath, (uint8_t)size).get();
+	m_ShouldUpdate = true;
+}
+
+void TextRenderComponent::SetColor(const SDL_Color& color)
+{
+	m_Color = color;
+	m_ShouldUpdate = true;
 }
 

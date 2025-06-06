@@ -329,6 +329,9 @@ void SimpleSpatialPhysicsSystem::RegisterPhysicsComponent(PhysicsComponent* pPhy
 {
 	if (pPhysicsComponent == nullptr) return;
 	
+	auto it = std::find(m_pPhysicsAgents.begin(), m_pPhysicsAgents.end(), pPhysicsComponent);
+	if (it != m_pPhysicsAgents.end()) return;
+
 	pPhysicsComponent->GetOwner()->GetGameObjectEventDispatcher()->AddObserver(this);
 	m_pPhysicsAgents.emplace_back(pPhysicsComponent);	
 	m_pCellSpace->AddAgent(pPhysicsComponent);

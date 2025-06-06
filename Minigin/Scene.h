@@ -13,6 +13,8 @@ namespace dae
 		void Remove(dae::GameObject* object);
 		void RemoveAll();
 
+		void ExitScene();
+		void EnterScene();
 		void Update(float deltaTime);
 		void FixedUpdate(float fixedTime);
 		void LateUpdate(float deltaTime);

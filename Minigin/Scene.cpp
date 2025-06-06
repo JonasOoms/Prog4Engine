@@ -38,6 +38,22 @@ void Scene::RemoveAll()
 	m_objects.clear();
 }
 
+void dae::Scene::ExitScene()
+{
+	for (auto& object : m_objects)
+	{
+		object->EndPlay();
+	}
+}
+
+void dae::Scene::EnterScene()
+{
+	for (auto& object : m_objects)
+	{
+		object->BeginPlay();
+	}
+}
+
 void Scene::Update(float deltaTime)
 {
 	for(auto& object : m_objects)

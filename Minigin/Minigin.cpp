@@ -61,7 +61,7 @@ dae::Minigin::Minigin(const std::string &dataPath)
 	}
 
 	g_window = SDL_CreateWindow(
-		"Programming 4 assignment",
+		"Loading Game...",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
@@ -92,21 +92,17 @@ dae::Minigin::~Minigin()
 	SDL_Quit();
 }
 
-void dae::Minigin::Run(const std::function<void()>& load)
+void dae::Minigin::Run(std::unique_ptr<IGame> game)
 {
-	load();
+	m_Game = std::move(game);
+	m_Game->Load();
+
+	SDL_SetWindowTitle(g_window, m_Game->GetGameTitle().data());
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
-	// todo: this update loop could use some work.
-
-	
-
-
-
-	
 	auto last_time = std::chrono::high_resolution_clock::now();
 	float lag = 0.0f;
 	while (doContinue)

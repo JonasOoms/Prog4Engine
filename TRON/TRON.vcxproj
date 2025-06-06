@@ -155,11 +155,13 @@
     <ClCompile Include="AITankComponent.cpp" />
     <ClCompile Include="BounceyPhysicsComponent.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
+    <ClCompile Include="GameModeSelectorLoadingComponent.cpp" />
     <ClCompile Include="GameRegistries.cpp" />
     <ClCompile Include="GridComponent.cpp" />
     <ClCompile Include="GridPathRenderer.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="LevelManagerComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerControllerCommand.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
@@ -170,6 +172,7 @@
     <ClCompile Include="SimpleMoveCommand.cpp" />
     <ClCompile Include="TankPhysicsComponent.cpp" />
     <ClCompile Include="TankRendererComponent.cpp" />
+    <ClCompile Include="TRONGame.cpp" />
     <ClCompile Include="TurretAngleChangeCommand.cpp" />
     <ClCompile Include="TurretComponent.cpp" />
     <ClCompile Include="ValueDisplayComponent.cpp" />
@@ -182,13 +185,16 @@
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameEnums.h" />
     <ClInclude Include="GameEvents.h" />
+    <ClInclude Include="GameModeSelectorLoadingComponent.h" />
     <ClInclude Include="GamePrefabs.h" />
     <ClInclude Include="GameRegistries.h" />
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="GridComponent.h" />
     <ClInclude Include="GridPathRenderer.h" />
+    <ClInclude Include="IEnemy.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="LevelManagerComponent.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
@@ -198,6 +204,7 @@
     <ClInclude Include="SimpleMoveCommand.h" />
     <ClInclude Include="TankPhysicsComponent.h" />
     <ClInclude Include="TankRendererComponent.h" />
+    <ClInclude Include="TRONGame.h" />
     <ClInclude Include="TurretAngleChangeCommand.h" />
     <ClInclude Include="TurretComponent.h" />
     <ClInclude Include="ValueComponent.h" />
