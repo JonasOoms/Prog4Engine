@@ -8,7 +8,7 @@ dae::Transform::Transform(GameObject* owner)
 
 const glm::vec3& dae::Transform::GetWorldPosition()
 {
-	if (m_PositionIsDirty)
+ 	if (m_PositionIsDirty)
 		UpdateWorldPosition();
 	return m_WorldPosition;
 }

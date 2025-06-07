@@ -70,7 +70,11 @@ void dae::GameObject::Render() const
 {
 	for (const std::unique_ptr<Component>& component : m_Components)
 	{
-		// not 100% sure about dynamic cast.
+		
+		
+		
+		
+		//not 100% sure about dynamic cast.
 		// Pros: this approach treats RenderComponents as anything but components, which keeps the logic simple for the component system
 		// Cons: performance heavy when there are many components.
 

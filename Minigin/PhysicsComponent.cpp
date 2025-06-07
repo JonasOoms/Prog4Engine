@@ -31,14 +31,8 @@ void PhysicsComponent::ComponentOwnerInitialized()
 	ServiceLocator::GetPhysicsSystem()->RegisterPhysicsComponent(this);
 }
 
-void PhysicsComponent::OnCollide(float , PhysicsComponent& other, dae::GameObject&, const HitInfo& hitInfo)
-{
-	if (other.isStatic)
-	{
-		auto currentPosition = GetOwner()->GetPosition();
-		auto collisionCorrection = glm::vec2(currentPosition.x, currentPosition.y) + (hitInfo.normal * hitInfo.penetrationDepth);
-		GetOwner()->SetPosition(collisionCorrection.x, collisionCorrection.y);
-	}
+void PhysicsComponent::OnCollide(float, PhysicsComponent& , dae::GameObject&, const HitInfo& )
+{ 
 }
 
 Engine::Rect PhysicsComponent::GetBoundingBox() const
@@ -50,6 +44,15 @@ Engine::Rect PhysicsComponent::GetBoundingBox() const
 
 glm::vec2 PhysicsComponent::GetPosition() const
 {
-	Engine::Rect boundingBox = GetBoundingBox();
-	return (glm::vec2(boundingBox.x + boundingBox.width * 0.5f, boundingBox.y + boundingBox.height * 0.5f));
+	return GetOwner()->GetPosition() + glm::vec2(m_Bounds.x * 0.5f, m_Bounds.y * 0.5f);
+}
+
+glm::vec2 PhysicsComponent::GetMin() const
+{
+    return GetPosition() - m_Bounds * 0.5f;  
+}
+
+glm::vec2 PhysicsComponent::GetMax() const
+{
+    return GetPosition() + m_Bounds * 0.5f;  
 }

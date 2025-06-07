@@ -4,10 +4,10 @@
 
 struct HitInfo
 {
-	glm::vec2 hitPosition;
-	glm::vec2 normal;
-	float penetrationDepth;
-	PhysicsComponent* pHitComponent;
+	glm::vec2 hitPosition{};
+	glm::vec2 normal{};
+	float penetrationDepth{};
+	PhysicsComponent* pHitComponent{};
 };
 
 class PhysicsSystem

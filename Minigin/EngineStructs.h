@@ -19,4 +19,12 @@ namespace Engine
 		float x, y;
 		float width, height;
 	};
+
+	struct SweepResult
+	{
+		bool hit = false;
+		float time = 1.0f; 
+		glm::vec2 normal = { 0, 0 };
+	};
+
 }

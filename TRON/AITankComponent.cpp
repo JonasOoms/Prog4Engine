@@ -63,12 +63,16 @@ int AITankComponent::GetHealth()
 	return m_HitPoints;
 }
 
+EventDispatcher* AITankComponent::GetEnemyEventDispatcher()
+{
+	return m_EventDispatcher.get();
+}
+
 
 std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComponent, float)
 {
 
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
-	// Step 1: Racyast to player. If hit, continue to shooting state. 
 
 	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
 	

@@ -9,7 +9,7 @@
 class AITankState;
 class TankPatrolState;
 
-class AITankComponent : public Component, public IEnemyHandlerComponent
+class AITankComponent : public Component, public IEnemyHandler
 {
 public:
 	AITankComponent(GridComponent* gridComponent, std::vector<dae::GameObject*>* target, float tankSpeed);
@@ -27,6 +27,9 @@ public:
 	size_t GetTargetCount() { return m_Target->size(); }
 	float GetSpeed() { return m_Speed; }
 	EventDispatcher* GetAITankEvent();
+
+	// Inherited via IEnemyHandler
+	EventDispatcher* GetEnemyEventDispatcher() override;
 private:
 	std::unique_ptr<SimpleMoveCommand> m_MoveCommand;
 	std::unique_ptr<AITankState> m_State;

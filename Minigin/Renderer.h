@@ -7,6 +7,14 @@
 #include "EngineStructs.h"
 
 
+struct SDL_Deleter
+{
+	void operator()(SDL_Renderer* renderer) const
+	{
+		SDL_DestroyRenderer(renderer);
+	}
+};
+
 namespace dae
 {
 	class Texture2D;
@@ -15,7 +23,7 @@ namespace dae
 	 */
 	class Renderer final : public Singleton<Renderer>
 	{
-		SDL_Renderer* m_renderer{};
+		std::unique_ptr<SDL_Renderer, SDL_Deleter> m_renderer{};
 		SDL_Window* m_window{};
 		SDL_Color m_clearColor{};	
 	public:

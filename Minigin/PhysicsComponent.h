@@ -18,7 +18,8 @@ public:
 	virtual void EndPlay() override;
 	virtual void ComponentOwnerInitialized() override;
 
-	/// <summary>
+	
+	// <summary>
 	/// Handle collision with other physics components. DO NOT CALL THIS DIRECTLY UNLESS YOU KNOW WHAT YOU ARE DOING
 	/// </summary>
 	virtual void OnCollide(float dt, PhysicsComponent&, dae::GameObject&, const HitInfo&);
@@ -29,6 +30,8 @@ public:
 	float GetHeight() const { return m_Bounds.y; }
 	void SetIsStatic(bool value) { this->isStatic = value; };
 	bool GetIsStatic() { return this->isStatic; };
+	glm::vec2 GetMin() const;
+	glm::vec2 GetMax() const;
 
 	void SetVelocity(glm::vec2 velocity) { m_Velocity = velocity; }
 	glm::vec2 GetVelocity() { return m_Velocity; }

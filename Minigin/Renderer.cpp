@@ -7,6 +7,8 @@
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
 #include <SDL_ttf.h>
+#include <SDL.h>
+#include <memory>
 #include "Font.h"
 
 int GetOpenGLDriverIndex()
@@ -26,13 +28,17 @@ int GetOpenGLDriverIndex()
 void dae::Renderer::Init(SDL_Window* window)
 {
 	m_window = window;
-	m_renderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED);
-	if (m_renderer == nullptr) 
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED);
+	if (renderer == nullptr) 
 	{
 		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
 	}
-
-	// Setup ImGUI
+	m_renderer = std::unique_ptr<SDL_Renderer, SDL_Deleter>(renderer);
+	
+	
+	
+	
+	//Setup ImGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImPlot::CreateContext();
@@ -47,12 +53,12 @@ void dae::Renderer::Init(SDL_Window* window)
 void dae::Renderer::Render() const
 {
 	const auto& color = GetBackgroundColor();
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderClear(m_renderer);
+	SDL_SetRenderDrawColor(m_renderer.get(), color.r, color.g, color.b, color.a);
+	SDL_RenderClear(m_renderer.get());
 
 	SceneManager::GetInstance().Render();
 	
-	SDL_RenderPresent(m_renderer);
+	SDL_RenderPresent(m_renderer.get());
 }
 
 void dae::Renderer::Destroy()
@@ -63,11 +69,6 @@ void dae::Renderer::Destroy()
 	ImGui::DestroyContext();
 	ImPlot::DestroyContext();
 
-	if (m_renderer != nullptr)
-	{
-		SDL_DestroyRenderer(m_renderer);
-		m_renderer = nullptr;
-	}
 }
 
 void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y) const
@@ -181,4 +182,4 @@ void dae::Renderer::DrawPoint(int x, int y, SDL_Color color) {
 	SDL_RenderDrawPoint(renderer, x, y);
 }
 
-SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
+SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer.get(); }

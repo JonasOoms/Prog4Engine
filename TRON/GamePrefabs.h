@@ -48,7 +48,7 @@ namespace TRONGameObjects
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 				inputMappingKeyboard->AddInputBinding(SDLK_q, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 				inputMappingKeyboard->AddInputBinding(SDLK_e, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
-				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 15.f, 0.5f));
+				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 20.f, 0.15f));
 				dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
 			}
 
@@ -59,7 +59,7 @@ namespace TRONGameObjects
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_LEFT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_RIGHT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
-			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 15.f, 0.5f));
+			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 20.f, 0.15f));
 			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(inputMappingKeyboard);
 
 			return tankPointer;

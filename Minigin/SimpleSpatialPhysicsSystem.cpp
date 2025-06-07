@@ -270,6 +270,58 @@ int SpatialPartitioning::CellSpace::PositionToIndex(const glm::vec2& pos) const
 
 void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 {
+
+	for (auto& agent : m_pPhysicsAgents)
+	{
+		if (!agent->GetIsStatic())
+		{
+			const Engine::Rect& rect = agent->GetBoundingBox();
+			glm::vec2 velocity = agent->GetVelocity() * fixedTime;
+
+			bool hitDetected = false;
+			Engine::SweepResult bestResult;
+			PhysicsComponent* hitComponent = nullptr;
+
+			for (auto& other : m_pPhysicsAgents)
+			{
+				if (other == agent || !other->GetIsStatic())
+					continue;
+
+				const Engine::Rect& otherRect = other->GetBoundingBox();
+				Engine::SweepResult res = SweptAABB(rect, velocity, otherRect);
+				if (res.hit && (!hitDetected || res.time < bestResult.time))
+				{
+					bestResult = res;
+					hitDetected = true;
+					hitComponent = other;
+				}
+			}
+
+			if (!hitDetected)
+			{
+			
+				agent->GetOwner()->SetPosition(rect.x + velocity.x, rect.y + velocity.y);
+			}
+			else
+			{
+				glm::vec2 safeMove = velocity * bestResult.time;
+				constexpr float safeMargin = 0.001f;
+				glm::vec2 safePos = glm::vec2(rect.x, rect.y) + safeMove - bestResult.normal * safeMargin;
+
+				agent->GetOwner()->SetPosition(safePos.x, safePos.y);
+
+				HitInfo info;
+				info.hitPosition = safePos;
+				info.normal = bestResult.normal;
+				info.pHitComponent = hitComponent;
+				info.penetrationDepth = 0.0f;
+
+				agent->OnCollide(fixedTime, *hitComponent, *hitComponent->GetOwner(), info);
+			}
+		}
+	}
+
+
 	for (auto& agent : m_pPhysicsAgents)
 	{
 		m_pCellSpace->RegisterNeighbors(agent, m_NeighborHoodRange);
@@ -278,6 +330,10 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 		{
 			PhysicsComponent* pNeighbor = m_pCellSpace->GetNeighbors()[neighborIndex];
 			if (pNeighbor == agent) continue;
+
+			// movement
+
+			
 
 			if (Engine::CheckAABBCollision(agent->GetBoundingBox(), pNeighbor->GetBoundingBox()))
 			{
@@ -298,18 +354,46 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 				{
 					HitInfo hitInfo;
 
+				
+					glm::vec2 normal(0.0f);
+
 					if (overlap.x < overlap.y)
 					{
+					
+						float penetrationDirection = delta.x < 0 ? -1.0f : 1.0f;
+						normal.x = penetrationDirection;
 						hitInfo.penetrationDepth = overlap.x;
-						hitInfo.normal = (delta.x < 0) ? glm::vec2(-1, 0) : glm::vec2(1, 0);
 					}
 					else
 					{
+					
+						float penetrationDirection = delta.y < 0 ? -1.0f : 1.0f;
+						normal.y = penetrationDirection;
 						hitInfo.penetrationDepth = overlap.y;
-						hitInfo.normal = (delta.y < 0) ? glm::vec2(0, -1) : glm::vec2(0, 1);
 					}
 
-					hitInfo.hitPosition = centerA;
+				
+					const float cornerThreshold = 0.25f;
+					float ratio = overlap.x / overlap.y;
+
+					if (ratio > 1.0f - cornerThreshold && ratio < 1.0f + cornerThreshold)
+					{
+					
+						normal = glm::normalize(delta);
+					}
+
+					hitInfo.normal = normal;
+					hitInfo.hitPosition = centerA + (halfSizeA * normal);
+
+					if (pNeighbor->GetIsStatic() && hitInfo.penetrationDepth > 0.0f && glm::length(hitInfo.normal) > 0.0f)
+					{
+						glm::vec2 currentPosition = agent->GetOwner()->GetPosition();
+						glm::vec2 correction = hitInfo.normal * hitInfo.penetrationDepth;
+						glm::vec2 newPosition = currentPosition + correction;
+						agent->GetOwner()->SetPosition(newPosition.x, newPosition.y);
+						std::cout << "Collision Detected" << std::endl;
+					}
+
 					agent->OnCollide(fixedTime, *pNeighbor, *pNeighbor->GetOwner(), hitInfo);
 				}
 			}
@@ -411,8 +495,25 @@ std::optional<HitInfo> SimpleSpatialPhysicsSystem::Raycast(const glm::vec2& orig
 			HitInfo hit;
 			hit.hitPosition = origin + dir * tNear;
 			hit.penetrationDepth = 0.f;
-			hit.normal = glm::vec2(0.f); // Can be improved if needed
 			hit.pHitComponent = agent;
+			glm::vec2 normal(0.f);
+
+			if (tNear == tmin.x)
+			{
+				if (dir.x < 0)
+					normal = glm::vec2(1.f, 0.f);   
+				else
+					normal = glm::vec2(-1.f, 0.f); 
+			}
+			else if (tNear == tmin.y)
+			{
+				
+				if (dir.y < 0)
+					normal = glm::vec2(0.f, 1.f);   
+				else
+					normal = glm::vec2(0.f, -1.f); 
+			}
+
 
 			closestHit = hit;
 		}
@@ -454,11 +555,30 @@ std::optional<HitInfo> SimpleSpatialPhysicsSystem::Raycast(const glm::vec2& orig
 			HitInfo hit;
 			hit.hitPosition = origin + dir * tNear;
 			hit.penetrationDepth = 0.f;
-			hit.normal = glm::vec2(0.f);
 			hit.pHitComponent = agent;
 
+			glm::vec2 normal(0.f);
+			if (tNear == tmin.x && tNear != tmin.y)
+			{
+				normal = (invDir.x < 0) ? glm::vec2(1.f, 0.f) : glm::vec2(-1.f, 0.f);
+			}
+			else if (tNear == tmin.y && tNear != tmin.x)
+			{
+				normal = (invDir.y < 0) ? glm::vec2(0.f, 1.f) : glm::vec2(0.f, -1.f);
+			}
+			else
+			{
+				
+				glm::vec2 cornerNormal = glm::normalize(glm::vec2(
+					(invDir.x < 0) ? 1.f : -1.f,
+					(invDir.y < 0) ? 1.f : -1.f
+				));
+				normal = cornerNormal;
+			}
+			hit.normal = normal;
 			closestHit = hit;
 		}
+
 	}
 
 	return closestHit;

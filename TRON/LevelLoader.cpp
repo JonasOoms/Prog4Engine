@@ -38,9 +38,12 @@ std::unique_ptr<Level> JSONLevelLoader::Parse(const std::string& filePath, dae::
 				int y = tile.at("y");
 
 				dae::GameObject* gameobject = new dae::GameObject();
-				gameobject->AddComponent<PhysicsComponent>(glm::vec2{ collisionTileWidth,collisionTileHeight })->SetIsStatic(true);
+				gameobject->AddComponent<PhysicsComponent>(glm::vec2{ collisionTileWidth ,collisionTileHeight })->SetIsStatic(true);
 				scene.Add(gameobject);
 				gridComponent->InsertAndParent(gameobject, x, y);
+				level->m_CollisionTiles.emplace_back(gameobject);
+
+
 			}
 
 
@@ -81,7 +84,9 @@ std::unique_ptr<Level> JSONLevelLoader::Parse(const std::string& filePath, dae::
 				enemy->GetGameObjectEventDispatcher()->AddObserver(renderer);
 				glm::vec2 positionInWorld = gridComponent->GetPositionAt(spawnpoint.at("x"), spawnpoint.at("y"));
 				enemy->SetPosition(positionInWorld.x, positionInWorld.y);
+				level->m_Enemies.emplace_back(enemy);
 				scene.Add(enemy);
+
 			}
 		}
 

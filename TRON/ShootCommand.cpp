@@ -16,7 +16,7 @@ void ShootCommand::Execute()
 {
 	auto now = std::chrono::high_resolution_clock::now();
 	float currentTime = std::chrono::duration<float>(now.time_since_epoch()).count();
-	if ((currentTime - m_CoolDownTime) >= m_CoolDownTime)
+	if ((currentTime - m_LastUsedTime) >= m_CoolDownTime)
 	{
 		m_LastUsedTime = currentTime;
 		float angleDegrees = m_Component->GetAngle();
