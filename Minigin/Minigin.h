@@ -28,7 +28,7 @@ namespace dae
 		const long ms_per_frame{ 16 };
 		
 		const static int windowWidth{ 650 };
-		const static int windowHeight{ 650 };
+		const static int windowHeight{ 700 };
 
 		static SDL_Window* g_window;
 		static bool doContinue;

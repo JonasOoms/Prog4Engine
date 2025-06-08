@@ -99,3 +99,7 @@ void dae::Scene::DebugDraw() const
 	}
 }
 
+void dae::Scene::DestroyCheck()
+{
+}
+

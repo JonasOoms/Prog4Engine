@@ -12,7 +12,7 @@ public:
 	void PollController(const SDL_Event& event = {});
 	
 	void AddMapping(InputMapping* mapping);
-
+	void ClearMapping();
 private:
 
 	class impl;

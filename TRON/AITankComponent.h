@@ -5,6 +5,7 @@
 #include "GameEvents.h"
 #include "SimpleMoveCommand.h"
 #include "IEnemy.h"
+#include "ShootCommand.h"
 
 class AITankState;
 class TankPatrolState;
@@ -19,7 +20,7 @@ public:
 	virtual void DebugDraw() override;
 
 	SimpleMoveCommand* GetMoveCommand() { return m_MoveCommand.get();}
-
+	EnemyShootCommand* GetShootCommand() { return m_ShootCommand.get();}
 
 
 	GridComponent* GetGridComponent() { return m_Grid; }
@@ -32,6 +33,7 @@ public:
 	EventDispatcher* GetEnemyEventDispatcher() override;
 private:
 	std::unique_ptr<SimpleMoveCommand> m_MoveCommand;
+	std::unique_ptr<EnemyShootCommand> m_ShootCommand;
 	std::unique_ptr<AITankState> m_State;
 	std::unique_ptr<EventDispatcher> m_EventDispatcher;
 	float m_Speed;
@@ -72,4 +74,19 @@ public:
 	TankEngageState() = default;
 	virtual std::unique_ptr<AITankState> Update(AITankComponent& AiTankComponent, float ds) override;
 	virtual void DebugDraw(AITankComponent& AiTankComponent) override;
+private:
+	bool WasCurrentTravelPointReached(AITankComponent& AiTankComponent);
+	Engine::GraphNode* m_SelectedTravelPoint{};
+	std::queue<Engine::GraphNode*> m_Path;
+};
+
+class TankShootState : public AITankState
+{
+public:
+	TankShootState() = default;
+	virtual std::unique_ptr<AITankState> Update(AITankComponent& AiTankComponent, float ds) override;
+	virtual void DebugDraw(AITankComponent& AiTankComponent) override;
+private:
+	float m_ShootCountdown{};
+	const float m_SecondsPerShot{.5f};
 };

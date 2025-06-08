@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="AchievementObserver.cpp" />
     <ClCompile Include="ActivationBoxComponent.cpp" />
+    <ClCompile Include="AiRecogniserComponent.cpp" />
     <ClCompile Include="AITankComponent.cpp" />
     <ClCompile Include="BounceyPhysicsComponent.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
@@ -160,13 +161,16 @@
     <ClCompile Include="GameRegistries.cpp" />
     <ClCompile Include="GridComponent.cpp" />
     <ClCompile Include="GridPathRenderer.cpp" />
+    <ClCompile Include="HUDRendererComponent.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="LevelManagerComponent.cpp" />
+    <ClCompile Include="LinearBulletComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerControllerCommand.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
+    <ClCompile Include="PlayerHandlerComponent.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
     <ClCompile Include="RenderComponentEx.cpp" />
     <ClCompile Include="ShootCommand.cpp" />
@@ -178,10 +182,12 @@
     <ClCompile Include="TurretComponent.cpp" />
     <ClCompile Include="ValueDisplayComponent.cpp" />
     <ClCompile Include="ValueIncreaseCommand.cpp" />
+    <ClCompile Include="VelocityBasedSpriteRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementObserver.h" />
     <ClInclude Include="ActivationBoxComponent.h" />
+    <ClInclude Include="AiRecogniserComponent.h" />
     <ClInclude Include="AITankComponent.h" />
     <ClInclude Include="BounceyPhysicsComponent.h" />
     <ClInclude Include="FPSComponent.h" />
@@ -193,13 +199,16 @@
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="GridComponent.h" />
     <ClInclude Include="GridPathRenderer.h" />
+    <ClInclude Include="HUDRendererComponent.h" />
     <ClInclude Include="IEnemy.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LevelManagerComponent.h" />
+    <ClInclude Include="LinearBulletComponent.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
+    <ClInclude Include="PlayerHandlerComponent.h" />
     <ClInclude Include="RectangleRenderer.h" />
     <ClInclude Include="RenderComponentEx.h" />
     <ClInclude Include="ShootCommand.h" />
@@ -212,6 +221,7 @@
     <ClInclude Include="ValueComponent.h" />
     <ClInclude Include="ValueDisplayComponent.h" />
     <ClInclude Include="ValueIncreaseCommand.h" />
+    <ClInclude Include="VelocityBasedSpriteRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,6 +27,7 @@ int GetOpenGLDriverIndex()
 
 void dae::Renderer::Init(SDL_Window* window)
 {
+
 	m_window = window;
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, GetOpenGLDriverIndex(), SDL_RENDERER_ACCELERATED);
 	if (renderer == nullptr) 
@@ -34,10 +35,7 @@ void dae::Renderer::Init(SDL_Window* window)
 		throw std::runtime_error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
 	}
 	m_renderer = std::unique_ptr<SDL_Renderer, SDL_Deleter>(renderer);
-	
-	
-	
-	
+
 	//Setup ImGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

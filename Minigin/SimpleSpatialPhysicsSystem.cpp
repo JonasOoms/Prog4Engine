@@ -135,132 +135,6 @@ void SpatialPartitioning::CellSpace::RenderCells() const
 
 }
 
-std::optional<HitInfo> SpatialPartitioning::CellSpace::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance)
-{
-	glm::vec2 dir = glm::normalize(direction);
-	glm::vec2 invDir = 1.0f / dir;
-
-	glm::vec2 rayPos = origin;
-	float t = 0.0f;
-	float step = 1.0f;
-
-	std::optional<HitInfo> closestHit;
-	float closestDistance = maxDistance;
-
-
-	while (t < maxDistance)
-	{
-		glm::vec2 pos = origin + dir * t;
-		int index = PositionToIndex(pos);
-
-		if (index < 0 || index >= static_cast<int>(m_Cells.size()))
-		{
-			t += step;
-			continue;
-		}
-
-		const SpatialPartitioning::Cell& cell = m_Cells[index];
-
-		for (PhysicsComponent* agent : cell.m_pPhysicsAgents)
-		{
-			const Engine::Rect& rect = agent->GetBoundingBox();
-
-			glm::vec2 min = { rect.x, rect.y };
-			glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
-
-			glm::vec2 t1 = (min - origin) * invDir;
-			glm::vec2 t2 = (max - origin) * invDir;
-
-			glm::vec2 tmin = glm::min(t1, t2);
-			glm::vec2 tmax = glm::max(t1, t2);
-
-			float tNear = std::max(tmin.x, tmin.y);
-			float tFar = std::min(tmax.x, tmax.y);
-
-			if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
-			{
-				closestDistance = tNear;
-
-				HitInfo hit;
-				hit.hitPosition = origin + dir * tNear;
-				hit.penetrationDepth = 0.f;
-				hit.normal = glm::vec2(0.f);
-				hit.pHitComponent = agent;
-
-				closestHit = hit;
-			}
-		}
-
-		t += step;
-	}
-
-	return closestHit;
-}
-
-std::optional<HitInfo> SpatialPartitioning::CellSpace::Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore)
-{
-	glm::vec2 dir = glm::normalize(direction);
-	glm::vec2 invDir = 1.0f / dir;
-
-	glm::vec2 rayPos = origin;
-	float t = 0.0f;
-	float step = 1.0f;
-
-	std::optional<HitInfo> closestHit;
-	float closestDistance = maxDistance;
-
-	while (t < maxDistance)
-	{
-		glm::vec2 pos = origin + dir * t;
-		int index = PositionToIndex(pos);
-
-		if (index < 0 || index >= static_cast<int>(m_Cells.size()))
-		{
-			t += step;
-			continue;
-		}
-
-		const SpatialPartitioning::Cell& cell = m_Cells[index];
-
-		for (PhysicsComponent* agent : cell.m_pPhysicsAgents)
-		{
-			if (agent == pIgnore) continue;
-
-			const Engine::Rect& rect = agent->GetBoundingBox();
-
-			glm::vec2 min = { rect.x, rect.y };
-			glm::vec2 max = { rect.x + rect.width, rect.y + rect.height };
-
-			glm::vec2 t1 = (min - origin) * invDir;
-			glm::vec2 t2 = (max - origin) * invDir;
-
-			glm::vec2 tmin = glm::min(t1, t2);
-			glm::vec2 tmax = glm::max(t1, t2);
-
-			float tNear = std::max(tmin.x, tmin.y);
-			float tFar = std::min(tmax.x, tmax.y);
-
-			if (tNear <= tFar && tFar >= 0 && tNear <= closestDistance)
-			{
-				closestDistance = tNear;
-
-				HitInfo hit;
-				hit.hitPosition = origin + dir * tNear;
-				hit.penetrationDepth = 0.f;
-				hit.normal = glm::vec2(0.f);
-				hit.pHitComponent = agent;
-
-				closestHit = hit;
-			}
-		}
-
-		t += step;
-	}
-
-	return closestHit;
-}
-
-
 int SpatialPartitioning::CellSpace::PositionToIndex(const glm::vec2& pos) const
 {
 	const int row = (int)(std::clamp(pos.y, 0.0f, m_SpaceHeight - 0.01f) / m_CellHeight);
@@ -282,21 +156,23 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 			Engine::SweepResult bestResult;
 			PhysicsComponent* hitComponent = nullptr;
 
+			// sweep to all static colliders, finding the shortest path to collision if one exists
 			for (auto& other : m_pPhysicsAgents)
 			{
 				if (other == agent || !other->GetIsStatic())
 					continue;
 
 				const Engine::Rect& otherRect = other->GetBoundingBox();
-				Engine::SweepResult res = SweptAABB(rect, velocity, otherRect);
-				if (res.hit && (!hitDetected || res.time < bestResult.time))
+				Engine::SweepResult sweep = SweptAABB(rect, velocity, otherRect);
+				if (sweep.hit && (!hitDetected || sweep.time < bestResult.time))
 				{
-					bestResult = res;
+					bestResult = sweep;
 					hitDetected = true;
 					hitComponent = other;
 				}
 			}
 
+			// no hit detected, we can keep going
 			if (!hitDetected)
 			{
 			
@@ -304,6 +180,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 			}
 			else
 			{
+				// hit was detected, lets make sure we block movement
 				glm::vec2 safeMove = velocity * bestResult.time;
 				constexpr float safeMargin = 0.001f;
 				glm::vec2 safePos = glm::vec2(rect.x, rect.y) + safeMove - bestResult.normal * safeMargin;
@@ -314,6 +191,8 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 				info.hitPosition = safePos;
 				info.normal = bestResult.normal;
 				info.pHitComponent = hitComponent;
+
+				// We are not in the collider, so no penetrationDepth
 				info.penetrationDepth = 0.0f;
 
 				agent->OnCollide(fixedTime, *hitComponent, *hitComponent->GetOwner(), info);
@@ -330,10 +209,6 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 		{
 			PhysicsComponent* pNeighbor = m_pCellSpace->GetNeighbors()[neighborIndex];
 			if (pNeighbor == agent) continue;
-
-			// movement
-
-			
 
 			if (Engine::CheckAABBCollision(agent->GetBoundingBox(), pNeighbor->GetBoundingBox()))
 			{
@@ -390,8 +265,10 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 						glm::vec2 currentPosition = agent->GetOwner()->GetPosition();
 						glm::vec2 correction = hitInfo.normal * hitInfo.penetrationDepth;
 						glm::vec2 newPosition = currentPosition + correction;
-						agent->GetOwner()->SetPosition(newPosition.x, newPosition.y);
-						std::cout << "Collision Detected" << std::endl;
+						if (!agent->GetIsStatic())
+						{
+							agent->GetOwner()->SetPosition(newPosition.x, newPosition.y);
+						}
 					}
 
 					agent->OnCollide(fixedTime, *pNeighbor, *pNeighbor->GetOwner(), hitInfo);

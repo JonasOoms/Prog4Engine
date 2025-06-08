@@ -11,7 +11,7 @@ PlayerControllerComponent::PlayerControllerComponent(float speed = 1000.f):
 {
 }
 
-void PlayerControllerComponent::Update(float )
+void PlayerControllerComponent::Update(float dt)
 {
   
         auto originalPos = GetOwner()->GetTransform().GetWorldPosition();
@@ -23,7 +23,12 @@ void PlayerControllerComponent::Update(float )
 		PhysicsComponent* physicsComponent = GetOwner()->GetComponent<PhysicsComponent>();
 		if (physicsComponent)
 		{
-			physicsComponent->SetVelocity(normalizedMovement * m_Speed);
+			glm::vec2 velocity = normalizedMovement * m_Speed;
+			physicsComponent->SetVelocity(velocity);
+			if (velocity.length() > 0.f)
+			{
+				TriggerMovementEvents(normalizedMovement, GetOwner()->GetPosition() + normalizedMovement * m_Speed * dt);
+			}
 		}
 
         m_MovementInput = glm::vec2(0, 0);

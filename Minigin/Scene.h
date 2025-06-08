@@ -21,6 +21,8 @@ namespace dae
 		void Render() const;
 		void DebugDraw() const;
 
+		void DestroyCheck();
+
 		std::string_view GetName() const {return m_name;}
 
 		~Scene();

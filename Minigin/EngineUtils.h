@@ -2,9 +2,56 @@
 
 #include "EngineStructs.h"
 
+
 namespace Engine
 {
   
+    static constexpr glm::vec2 VectorEast = glm::vec2(1.f, 0.f);
+    static constexpr glm::vec2 VectorWest = glm::vec2(-1.f, 0.f);
+    static constexpr glm::vec2 VectorNorth = glm::vec2(0.f, 1.f);
+    static constexpr glm::vec2 VectorSouth = glm::vec2(0.f, -1.f);
+
+    static constexpr glm::vec2 cardinals[] = {
+            VectorEast,
+            VectorWest,
+            VectorNorth,
+            VectorSouth
+    };
+
+    inline bool GetIsDirectionCardinal(const glm::vec2& direction, float angleThresholdDegrees = 5.f)
+    {
+        glm::vec2 normalizedDir = glm::normalize(direction);
+        float thresholdCos = glm::cos(glm::radians(angleThresholdDegrees));
+
+        for (const auto& cardinal : cardinals)
+        {
+            float dot = glm::dot(normalizedDir, cardinal);
+            if (dot >= thresholdCos)
+                return true;
+        }
+
+        return false;
+    }
+
+    inline glm::vec2 GetClosestCardinal(const glm::vec2& direction)
+    {
+        glm::vec2 normalizedDir = glm::normalize(direction);
+        float maxDot = -1.f;
+        glm::vec2 closestCardinal = cardinals[0];
+
+        for (const auto& cardinal : cardinals)
+        {
+            float dot = glm::dot(normalizedDir, cardinal);
+            if (dot > maxDot)
+            {
+                maxDot = dot;
+                closestCardinal = cardinal;
+            }
+        }
+
+        return closestCardinal;
+    }
+
     constexpr bool CheckAABBCollision(const Engine::Rect& a, const Engine::Rect& b) {
         return (a.x < b.x + b.width &&
             a.x + a.width > b.x && 
@@ -35,8 +82,11 @@ namespace Engine
         return (tNear <= tFar) && (tFar >= 0);
     }
 
+    // useful for static vs dynamic objects. 
+    // Changing the problem from does it collide to will it collide
     inline SweepResult SweptAABB(const Engine::Rect& moving, const glm::vec2& velocity, const Engine::Rect& target)
     {
+        // Expand the static box so that the problem becomes ray vs AABB
         Engine::Rect expandedTarget;
         expandedTarget.x = target.x - moving.width;
         expandedTarget.y = target.y - moving.height;

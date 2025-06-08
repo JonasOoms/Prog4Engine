@@ -14,6 +14,9 @@ namespace dae
 		bool ProcessInput();
 
 		PlayerController* GetPlayerController(int index);
+		void ClearAllMappings();
+		
+
 	private:
 
 		std::unique_ptr<PlayerController> m_pKeyboardPlayerController;

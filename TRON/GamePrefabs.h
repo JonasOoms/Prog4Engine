@@ -15,6 +15,7 @@
 #include "BounceyPhysicsComponent.h"
 #include "RenderComponentEx.h"
 #include "ShootCommand.h"
+#include "PlayerHandlerComponent.h"
 
 namespace TRONGameObjects
 {
@@ -29,6 +30,7 @@ namespace TRONGameObjects
 			tank->AddComponent<PhysicsComponent>(glm::vec2{ 40.f, 40.f });
 			auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(100.f);
 			playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
+			tank->AddComponent<PlayerTankHandlerComponent>();
 
 			tank->SetPosition(100, 100);
 			scene.Add(std::move(tank));
@@ -48,7 +50,7 @@ namespace TRONGameObjects
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 				inputMappingKeyboard->AddInputBinding(SDLK_q, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 				inputMappingKeyboard->AddInputBinding(SDLK_e, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
-				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 20.f, 0.15f));
+				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, std::make_unique<PlayerShootCommand>(turret, scene, 20.f, 0.15f));
 				dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
 			}
 
@@ -59,7 +61,7 @@ namespace TRONGameObjects
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_LEFT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_RIGHT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
-			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<ShootCommand>(turret, scene, 20.f, 0.15f));
+			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<PlayerShootCommand>(turret, scene, 20.f, 0.15f));
 			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(inputMappingKeyboard);
 
 			return tankPointer;
@@ -72,7 +74,7 @@ namespace TRONGameObjects
 			bullet->AddComponent<BounceyPhysicsComponent>(glm::vec2{ 10.f,10.f }, velocity, tank);
 			auto renderComponent = bullet->AddComponent<RenderComponentEx>(10.f, 10.f);
 			renderComponent->SetTexture("Textures/T_PlayerBullet.png");
-			glm::vec2 pos = tank->GetComponent<PhysicsComponent>()->GetPosition();
+ 			glm::vec2 pos = tank->GetComponent<PhysicsComponent>()->GetPosition();
 			bullet->SetPosition(pos.x, pos.y);
 			scene.Add(bullet);
 			return bullet;

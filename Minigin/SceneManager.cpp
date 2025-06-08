@@ -17,8 +17,11 @@ void dae::SceneManager::FixedUpdate(float fixedTime)
 
 void dae::SceneManager::LateUpdate(float deltaTime)
 {
-	if (!m_SelectedScene) return;
-	m_SelectedScene->LateUpdate(deltaTime);
+	if (m_SelectedScene)
+	{
+		m_SelectedScene->LateUpdate(deltaTime);
+	}
+	SelectSceneInternal();
 }
 
 void dae::SceneManager::Render()
@@ -54,8 +57,7 @@ void dae::SceneManager::SelectScene(std::string_view name)
 		{
 			m_SelectedScene->ExitScene();
 		}
-		m_SelectedScene = (*it).get();
-		m_SelectedScene->EnterScene();
+		m_SceneToSwitchTo = (*it).get();
 	}
 	else
 	{
@@ -68,8 +70,28 @@ dae::Scene& dae::SceneManager::GetCurrentScene()
 	return *m_SelectedScene;
 }
 
+void dae::SceneManager::SelectSceneInternal()
+{
+	if (m_SceneToSwitchTo)
+	{
+		m_SelectedScene = m_SceneToSwitchTo;
+		m_SceneToSwitchTo = nullptr;
+		m_SelectedScene->EnterScene();
+	}
+}
+
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
+	auto it = std::find_if(m_scenes.begin(), m_scenes.end(), [name](const std::shared_ptr<Scene>& scene)
+		{
+			return (scene->GetName() == name);
+		});
+
+	if (it != m_scenes.end())
+	{
+		return *(*it);
+	}
+
 	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
 	m_scenes.push_back(scene);
 	return *scene;

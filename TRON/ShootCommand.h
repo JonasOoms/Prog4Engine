@@ -3,10 +3,10 @@
 #include "TurretComponent.h"
 #include "Scene.h"
 
-class ShootCommand : public Command
+class PlayerShootCommand : public Command
 {
 public:
-	ShootCommand(TurretComponent* component, dae::Scene& scene, float speed, float coolDownTime);
+	PlayerShootCommand(TurretComponent* component, dae::Scene& scene, float speed, float coolDownTime);
 	// Inherited via Command
 	void Execute() override;
 private:
@@ -17,3 +17,19 @@ private:
 	float m_LastUsedTime{};
 };
 
+class EnemyShootCommand : public Command
+{
+public:
+
+	EnemyShootCommand(dae::GameObject* enemy, float speed);
+	void SetDirection(const glm::vec2& direction) { m_Direction = direction; }
+
+	// Inherited via Command
+	void Execute() override;
+
+private:
+	dae::GameObject* m_Enemy{};
+	glm::vec2 m_Direction{};
+	float m_Speed;
+
+};

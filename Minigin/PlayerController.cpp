@@ -68,6 +68,11 @@ public:
 		m_pInputMapping.reset(mapping);
 	}
 
+	void ClearMapping()
+	{
+		m_pInputMapping.reset();
+	}
+
 	WORD GetButtonsPressedThisFrame() const
 	{
 		return m_buttonsPressedThisFrame;
@@ -119,4 +124,9 @@ void PlayerController::PollController(const SDL_Event& event)
 void PlayerController::AddMapping(InputMapping* mapping)
 {
 	m_pImpl->AddMapping(mapping);
+}
+
+void PlayerController::ClearMapping()
+{
+	m_pImpl->ClearMapping();
 }

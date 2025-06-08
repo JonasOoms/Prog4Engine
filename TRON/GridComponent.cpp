@@ -94,6 +94,7 @@ void GridComponent::Insert(dae::GameObject* object, int row, int column)
 		m_Grid[row][column] = object;
 	}
 
+
 	float x = column * m_CellWidth;
 	float y = row * m_CellHeight;
 	object->SetPosition(x, y);
@@ -109,15 +110,20 @@ void GridComponent::InsertAndParent(dae::GameObject* object, int row, int column
 
 glm::vec2 GridComponent::GetPositionAt(int row, int column)
 {
-	float x = column * m_CellWidth;
-	float y = row * m_CellHeight;
+	const glm::vec2 offset = GetOwner()->GetPosition();
+	const float x = offset.x + column * m_CellWidth;
+	const float y = offset.y + row * m_CellHeight;
 	return glm::vec2(x,y);
 }
 
 int GridComponent::GetIndexFromPosition(const glm::vec2& pos)
 {
-	const int row = (int)(std::clamp(pos.y, 0.0f, m_CellHeight - 0.01f) / m_CellHeight);
-	const int col = (int)(std::clamp(pos.x, 0.0f, m_CellWidth - 0.01f) / m_CellWidth);
+	const glm::vec2 offset = GetOwner()->GetPosition();
+
+	const glm::vec2 localPos = pos - offset;
+
+	const int row = (int)(std::clamp(localPos.y, 0.0f, m_Height - 0.01f) / m_CellHeight);
+	const int col = (int)(std::clamp(localPos.x, 0.0f, m_Width - 0.01f) / m_CellWidth);
 	return (row * m_Columns + col);
 
 }

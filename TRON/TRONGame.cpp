@@ -31,6 +31,7 @@
 #include "GameRegistries.h"
 #include "LevelManagerComponent.h"
 #include "GameModeSelectorLoadingComponent.h"
+#include "ActivationBoxComponent.h"
 
 TRONGame::TRONGame()
 {
@@ -90,11 +91,36 @@ void TRONGame::LoadMainMenu()
 	go->SetPosition(dae::Minigin::windowWidth / 2 - 33*3.3f, dae::Minigin::windowHeight / 2 - 100);
 	scene.Add(std::move(go));
 
+
 	go = std::make_unique<dae::GameObject>();
-	go->AddComponent<GameModeSelectorLoadingComponent>(this);
+	auto singlePlayerBox = go.get();
+	go->AddComponent<ActivationBoxComponent>([&]()
+		{
+			LoadLevel();
+			this->ChangeGameMode(GameMode::Singleplayer);
+			dae::SceneManager::GetInstance().SelectScene("Level");
+
+		});
+	go->AddComponent<PhysicsComponent>(glm::vec2{ 130,100 });
+	go->SetPosition(dae::Minigin::windowWidth / 2 - 130 / 2 - 20, dae::Minigin::windowHeight / 2 - 130);
 	scene.Add(std::move(go));
-	
-	
+
+	auto tank = std::make_unique<dae::GameObject>();
+
+	tank->AddComponent<PhysicsComponent>(glm::vec2{ 20.f, 20.f });
+	tank->AddComponent<PlayerControllerComponent>(100.f);
+	auto selectorRenderer = tank->AddComponent<RenderComponentEx>(20.f, 20.f);
+	selectorRenderer->SetTexture("Textures/T_Selector.png");
+	tank->SetPosition(dae::Minigin::windowWidth / 2 - 20.f / 2, dae::Minigin::windowHeight / 2 - 20.f / 2);
+
+
+	go = std::make_unique<dae::GameObject>();
+	go->AddComponent<GameModeSelectorLoadingComponent>(this, tank.get(), singlePlayerBox);
+	scene.Add(std::move(go));
+
+	scene.Add(std::move(tank));
+
+
 }
 
 void TRONGame::LoadLevel()
@@ -109,11 +135,28 @@ void TRONGame::LoadLevel()
 	auto text = go->AddComponent<TextRenderComponent>("FPS: ", "Fonts/Volter_Goldfish.ttf", 11);
 	go->AddComponent<FPSComponent>(text);
 	scene.Add(std::move(go));
-	
+
+	auto HUDBlackout = std::make_unique<dae::GameObject>();
+	HUDBlackout->AddComponent<RenderComponentEx>((float)dae::Minigin::windowWidth, 65.f)->SetTexture("Textures/T_FillTile.png");
+	scene.Add(std::move(HUDBlackout));
+
+	auto LifeCounter = std::make_unique <dae::GameObject>();
+	auto lifeCounterText = LifeCounter->AddComponent<TextRenderComponent>("1st", "Fonts/Volter_Goldfish.ttf", 20);
+	lifeCounterText->SetColor(SDL_Color{ 0,0,255,255 });
+	LifeCounter->SetPosition(30, 10);
+	scene.Add(std::move(LifeCounter));
+
+	auto ScoreCounter = std::make_unique <dae::GameObject>();
+	auto scoreText = ScoreCounter->AddComponent<TextRenderComponent>("0", "Fonts/Volter_Goldfish.ttf", 20);
+	scoreText->SetColor(SDL_Color{ 0,0,255,255 });
+	ScoreCounter->SetPosition(70, 34);
+	scene.Add(std::move(ScoreCounter));
+
 	go = std::make_unique<dae::GameObject>();
-	go->AddComponent<LevelManagerComponent>();
+	go->AddComponent<LevelManagerComponent>(this, scoreText, lifeCounterText ,nullptr);
 	scene.Add(std::move(go));
 
+	
 
 }
 
@@ -133,10 +176,9 @@ void TRONGame::Load()
 		TRONRegistries::GameSoundRegistry.Register("Explosion", soundSystem->RegisterAudio("../Data/Sounds/S_Explosion.wav"));
 
 		LoadMainMenu();
-		LoadLevel();
 
-		//dae::SceneManager::GetInstance().SelectScene("Level");
 		dae::SceneManager::GetInstance().SelectScene("Menu");
+		//dae::SceneManager::GetInstance().SelectScene("Level");
 	
 		
 

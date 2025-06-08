@@ -61,3 +61,12 @@ PlayerController* dae::InputManager::GetPlayerController(int index)
 	}
 	return m_pPlayerControllers[index].get();
 }
+
+void dae::InputManager::ClearAllMappings()
+{
+	m_pKeyboardPlayerController->ClearMapping();
+	for (auto& controller : m_pPlayerControllers)
+	{
+		controller->ClearMapping();
+	}
+}

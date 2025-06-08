@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "Minigin.h"
 #include "Singleton.h"
 
 namespace dae
@@ -21,9 +22,13 @@ namespace dae
 		dae::Scene& GetCurrentScene();
 
 	private:
+
+
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
-		Scene* m_SelectedScene;
+		Scene* m_SceneToSwitchTo{};
+		void SelectSceneInternal();
+		Scene* m_SelectedScene{};
 		std::vector<std::shared_ptr<Scene>> m_scenes;
 	};
 }
