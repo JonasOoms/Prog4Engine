@@ -43,7 +43,7 @@ namespace dae
 		bool IsParentOf(GameObject* object);
 		void SetParent(GameObject* parent, bool keepWorldPosition, bool sendEvent = true);
 
-		GameObject* GetParent() { return m_Parent; }
+  		GameObject* GetParent() { return m_Parent; }
 
 		EventDispatcher* GetGameObjectEventDispatcher() const
 		{

@@ -161,6 +161,7 @@
     <ClCompile Include="GameRegistries.cpp" />
     <ClCompile Include="GridComponent.cpp" />
     <ClCompile Include="GridPathRenderer.cpp" />
+    <ClCompile Include="HighScoreBuffer.cpp" />
     <ClCompile Include="HUDRendererComponent.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="PlayerHandlerComponent.cpp" />
     <ClCompile Include="RectangleRenderer.cpp" />
     <ClCompile Include="RenderComponentEx.cpp" />
+    <ClCompile Include="ScoreManagerComponent.cpp" />
     <ClCompile Include="ShootCommand.cpp" />
     <ClCompile Include="SimpleMoveCommand.cpp" />
     <ClCompile Include="TankPhysicsComponent.cpp" />
@@ -199,6 +201,7 @@
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="GridComponent.h" />
     <ClInclude Include="GridPathRenderer.h" />
+    <ClInclude Include="HighScoreBuffer.h" />
     <ClInclude Include="HUDRendererComponent.h" />
     <ClInclude Include="IEnemy.h" />
     <ClInclude Include="Level.h" />
@@ -211,6 +214,7 @@
     <ClInclude Include="PlayerHandlerComponent.h" />
     <ClInclude Include="RectangleRenderer.h" />
     <ClInclude Include="RenderComponentEx.h" />
+    <ClInclude Include="ScoreManagerComponent.h" />
     <ClInclude Include="ShootCommand.h" />
     <ClInclude Include="SimpleMoveCommand.h" />
     <ClInclude Include="TankPhysicsComponent.h" />

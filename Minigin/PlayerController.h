@@ -11,7 +11,7 @@ public:
 
 	void PollController(const SDL_Event& event = {});
 	
-	void AddMapping(InputMapping* mapping);
+	void AddMapping(std::unique_ptr<InputMapping>&& mapping);
 	void ClearMapping();
 private:
 

@@ -26,7 +26,7 @@ namespace TRONGameObjects
 		{
 			auto tank = std::make_unique<dae::GameObject>();
 			auto tankPointer = tank.get();
-			auto playerTankRendererComponent = tank->AddComponent<TankRendererComponent>("Textures/T_PlayerTank.png", 40.f, 40.f);
+			auto playerTankRendererComponent = tank->AddComponent<TankRendererComponent>("Textures/T_CoopTank.png", 40.f, 40.f);
 			tank->AddComponent<PhysicsComponent>(glm::vec2{ 40.f, 40.f });
 			auto playerControllerComponentKeyboard = tank->AddComponent<PlayerControllerComponent>(100.f);
 			playerControllerComponentKeyboard->GetMovedEvent()->AddObserver(playerTankRendererComponent);
@@ -43,7 +43,9 @@ namespace TRONGameObjects
 
 			if (playerId == 0)
 			{
-				auto inputMappingKeyboard = new InputMapping();
+				playerTankRendererComponent->SetTexture("Textures/T_PlayerTank.png");
+
+				auto inputMappingKeyboard = std::make_unique<InputMapping>();
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_W, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_D, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
 				inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_S, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
@@ -51,10 +53,10 @@ namespace TRONGameObjects
 				inputMappingKeyboard->AddInputBinding(SDLK_q, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 				inputMappingKeyboard->AddInputBinding(SDLK_e, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
 				inputMappingKeyboard->AddInputBinding(SDLK_SPACE, TriggerType::Down, std::make_unique<PlayerShootCommand>(turret, scene, 20.f, 0.15f));
-				dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(inputMappingKeyboard);
+				dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(std::move(inputMappingKeyboard));
 			}
 
-			auto inputMappingKeyboard = new InputMapping();
+			auto inputMappingKeyboard = std::make_unique<InputMapping>();
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_UP, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 0,-1 }));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 1,0 }));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
@@ -62,22 +64,23 @@ namespace TRONGameObjects
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_LEFT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, -30.f));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_RIGHT_SHOULDER, TriggerType::Down, std::make_unique<TurretAngleChangeCommand>(turret, 30.f));
 			inputMappingKeyboard->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<PlayerShootCommand>(turret, scene, 20.f, 0.15f));
-			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(inputMappingKeyboard);
+			dae::InputManager::GetInstance().GetPlayerController(playerId)->AddMapping(std::move(inputMappingKeyboard));
 
 			return tankPointer;
 		} 
 
 		inline dae::GameObject* CreateProjectile(dae::Scene& scene, dae::GameObject* tank, const glm::vec2 & velocity)
 		{
-			auto bullet = new dae::GameObject();
+			auto bullet = std::make_unique<dae::GameObject>();
 
 			bullet->AddComponent<BounceyPhysicsComponent>(glm::vec2{ 10.f,10.f }, velocity, tank);
 			auto renderComponent = bullet->AddComponent<RenderComponentEx>(10.f, 10.f);
 			renderComponent->SetTexture("Textures/T_PlayerBullet.png");
  			glm::vec2 pos = tank->GetComponent<PhysicsComponent>()->GetPosition();
 			bullet->SetPosition(pos.x, pos.y);
-			scene.Add(bullet);
-			return bullet;
+			dae::GameObject* ptr = bullet.get();
+			scene.Add(std::move(bullet));
+			return ptr;
 		}
 };
 }

@@ -23,8 +23,8 @@ void LevelManagerComponent::BeginPlay()
 	{
 		ClearLevel();
 	}
-	LoadLevel("../Data/Levels/LevelUno.json");
-	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 40.f);
+	LoadLevel("../Data/Levels/LevelOne.json");
+	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 20.f);
 }
 
 void LevelManagerComponent::EndPlay()
@@ -36,18 +36,29 @@ void LevelManagerComponent::Update(float)
 {
 	if (m_ExitLevel)
 	{
-		m_Game->SetIsInLevel(false);
+		//m_Game->SetIsInLevel(false);
+		m_Game->CurrentScore = m_Score;
 		m_Lives = 3;
 		m_Score = 0;
 		m_ExitLevel = false;
-		m_LoadNextLevel = true;
+		m_LoadNextLevel = false;
+		TRONGame* game = m_Game;
 		dae::SceneManager::GetInstance().GetCurrentScene().RemoveAll();
-		dae::SceneManager::GetInstance().SelectScene("Menu");
+		game->LoadScoreScreen();
 	}
 	else if (m_LoadNextLevel)
 	{
-		
-		LoadLevel("../Data/Levels/LevelTwo.json");
+		switch (m_SelectedLevel % 3)
+		{
+		case 0:
+			LoadLevel("../Data/Levels/LevelOne.json");
+			break;
+		case 1:
+			LoadLevel("../Data/Levels/LevelTwo.json");
+			break;
+		case 2:
+			LoadLevel("../Data/Levels/LevelThree.json");
+		}
 		m_LoadNextLevel = false;
 	}
 }
@@ -55,7 +66,27 @@ void LevelManagerComponent::Update(float)
 void LevelManagerComponent::LoadLevel(const std::string& filePath)
 {
 	JSONLevelLoader loader{};
-	m_Level = std::move(loader.Parse(filePath, dae::SceneManager::GetInstance().GetCurrentScene()));
+
+	switch (m_Game->GetGameMode())
+	{
+		case GameMode::Singleplayer:
+		{
+			m_Level = std::move(loader.LoadSinglePlayer(filePath, dae::SceneManager::GetInstance().GetCurrentScene()));
+			break;
+		}
+		case GameMode::Coop:
+		{
+			m_Level = std::move(loader.LoadCoOp(filePath, dae::SceneManager::GetInstance().GetCurrentScene()));
+			break;
+		}
+		case GameMode::VS:
+		{
+			m_Level = std::move(loader.LoadVS(filePath, dae::SceneManager::GetInstance().GetCurrentScene()));
+			break;
+		}
+	}
+
+	
 	m_Level->m_GridObject->GetComponent<GridComponent>()->GetGraphFromGrid();
 
 	for (dae::GameObject* player : m_Level->m_Players)
@@ -66,7 +97,7 @@ void LevelManagerComponent::LoadLevel(const std::string& filePath)
 		}
 	}
 
-	uint8_t enemyAmount{};
+	size_t enemyAmount{};
 	// bind enemy tanks and recognisers to the Level Manager 
 	for (dae::GameObject* enemy : m_Level->m_Enemies)
 	{
@@ -88,7 +119,7 @@ void LevelManagerComponent::LoadLevel(const std::string& filePath)
 
 	m_EnemiesLeft = enemyAmount;
 
-	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 40.f);
+	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 20.f);
 }
 
 void LevelManagerComponent::ClearLevel()
@@ -98,20 +129,23 @@ void LevelManagerComponent::ClearLevel()
 		m_Level->m_GridPathRenderer->Destroy();
 		m_Level->m_GridObject->Destroy();
 
+		for (dae::GameObject* player : m_Level->m_Players)
+		{
+			player->RemoveComponent<PlayerTankHandlerComponent>();
+			player->Destroy();
+		}
+
 		for (dae::GameObject* enemy : m_Level->m_Enemies)
 		{
 			enemy->Destroy();
-		}
-
-		for (dae::GameObject* player : m_Level->m_Players)
-		{
-			player->Destroy();
 		}
 
 		for (dae::GameObject* recognizer : m_Level->m_Recognisers)
 		{
 			recognizer->Destroy();
 		}
+
+		ServiceLocator::GetPhysicsSystem()->UnregisterAllPhysicsComponents();
 
 	}
 }
@@ -133,8 +167,12 @@ void LevelManagerComponent::Notify(const Event& event, EventDispatcher* )
 			}
 			else
 			{
-				m_Level->m_Recognisers.erase(std::find(m_Level->m_Recognisers.begin(), m_Level->m_Recognisers.end(), ctx.enemy));
-				m_Score += 250;
+				it = std::find(m_Level->m_Recognisers.begin(), m_Level->m_Recognisers.end(), ctx.enemy);
+				if (it != m_Level->m_Recognisers.end())
+				{
+					m_Level->m_Recognisers.erase(it);
+					m_Score += 250;
+				}
 			}
 
 			--m_EnemiesLeft;
@@ -147,6 +185,7 @@ void LevelManagerComponent::Notify(const Event& event, EventDispatcher* )
 
 				ClearLevel();
 
+				++m_SelectedLevel;
 				m_LoadNextLevel = true;
 			}
 			break;
@@ -177,7 +216,6 @@ void LevelManagerComponent::Notify(const Event& event, EventDispatcher* )
 
 			if (m_Lives <= 0)
 			{
-				// TODO Change to end screen
 				ClearLevel();
 				m_ExitLevel = true;
 				break;

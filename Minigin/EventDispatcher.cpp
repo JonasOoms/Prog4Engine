@@ -3,6 +3,11 @@
 #include "Observer.h"
 #include "Event.h"
 
+EventDispatcher::~EventDispatcher()
+{
+	m_Observers.clear();
+}
+
 void EventDispatcher::AddObserver(Observer* observer)
 {
 	if (!(std::find(m_Observers.begin(), m_Observers.end(), observer) != m_Observers.end()))

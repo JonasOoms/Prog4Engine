@@ -32,21 +32,25 @@
 #include "LevelManagerComponent.h"
 #include "GameModeSelectorLoadingComponent.h"
 #include "ActivationBoxComponent.h"
+#include "ScoreManagerComponent.h"
 
-TRONGame::TRONGame()
+TRONGame::TRONGame():
+	m_HighScores{ "../Data/SaveGame/TronScores.json" }
 {
-	// deserialize high scores
 }
 
 TRONGame::~TRONGame()
 {
-	// serialize high scores
+	m_HighScores.Serialize("../Data/SaveGame/TronScores.json");
 }
 
 void TRONGame::LoadMainMenu()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Menu");
-	
+	scene.RemoveAll();
+	dae::SceneManager::GetInstance().SelectScene("Menu");
+
+
 	constexpr float width = 500.f;
 	constexpr float height = 350.f;
 
@@ -93,17 +97,17 @@ void TRONGame::LoadMainMenu()
 
 
 	go = std::make_unique<dae::GameObject>();
-	auto singlePlayerBox = go.get();
-	go->AddComponent<ActivationBoxComponent>([&]()
-		{
-			LoadLevel();
-			this->ChangeGameMode(GameMode::Singleplayer);
-			dae::SceneManager::GetInstance().SelectScene("Level");
-
-		});
+	auto singlePlayerBox = go->AddComponent<ActivationBoxComponent>(LoadSingleplayerLevel);
 	go->AddComponent<PhysicsComponent>(glm::vec2{ 130,100 });
 	go->SetPosition(dae::Minigin::windowWidth / 2 - 130 / 2 - 20, dae::Minigin::windowHeight / 2 - 130);
 	scene.Add(std::move(go));
+
+	go = std::make_unique<dae::GameObject>();
+	auto coopBox = go->AddComponent<ActivationBoxComponent>(LoadCoopLevel);
+	go->AddComponent<PhysicsComponent>(glm::vec2{ 130,100 });
+	go->SetPosition(dae::Minigin::windowWidth / 2 + 75, dae::Minigin::windowHeight / 2 - 11);
+	scene.Add(std::move(go));
+
 
 	auto tank = std::make_unique<dae::GameObject>();
 
@@ -114,19 +118,23 @@ void TRONGame::LoadMainMenu()
 	tank->SetPosition(dae::Minigin::windowWidth / 2 - 20.f / 2, dae::Minigin::windowHeight / 2 - 20.f / 2);
 
 
+	auto activationBoxes = std::vector{ singlePlayerBox, coopBox };
 	go = std::make_unique<dae::GameObject>();
-	go->AddComponent<GameModeSelectorLoadingComponent>(this, tank.get(), singlePlayerBox);
+	go->AddComponent<GameModeSelectorLoadingComponent>(this, tank.get(), activationBoxes);
 	scene.Add(std::move(go));
 
 	scene.Add(std::move(tank));
 
-
 }
 
-void TRONGame::LoadLevel()
+void TRONGame::LoadLevel(GameMode gamemode)
 {
+
+	m_SelectedGameMode = gamemode;
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Level");
+	scene.RemoveAll();
 	dae::SceneManager::GetInstance().SelectScene("Level");
+
 	auto go = std::make_unique<dae::GameObject>();
 	go->AddComponent<RectangleRendererComponent>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight, "Textures/T_CircuitBoard.png");
 	scene.Add(std::move(go));
@@ -157,6 +165,41 @@ void TRONGame::LoadLevel()
 	scene.Add(std::move(go));
 
 	
+}
+
+void TRONGame::LoadScoreScreen()
+{
+
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Scores");
+	scene.RemoveAll();
+	dae::SceneManager::GetInstance().SelectScene("Scores");
+	auto& inputManager = dae::InputManager::GetInstance();
+	inputManager.ClearAllMappings();
+
+
+	auto go = std::make_unique<dae::GameObject>();
+	auto scoreManager = go->AddComponent<ScoreManagerComponent>(this);
+	scene.Add(std::move(go));
+	
+	auto inputMappingKeyboard = std::make_unique<InputMapping>();
+	inputMappingKeyboard->AddInputBinding(SDLK_ESCAPE, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Back));
+	inputMappingKeyboard->AddInputBinding(SDLK_RETURN, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Enter));
+	inputMappingKeyboard->AddInputBinding(SDLK_LEFT, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Left));
+	inputMappingKeyboard->AddInputBinding(SDLK_RIGHT, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Right));
+	inputMappingKeyboard->AddInputBinding(SDLK_UP, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Up));
+	inputMappingKeyboard->AddInputBinding(SDLK_DOWN, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Down));
+	inputManager.GetPlayerController(-1)->AddMapping(std::move(inputMappingKeyboard));
+
+	auto inputMappingController = std::make_unique<InputMapping>();
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_B, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Back));
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_A, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Enter));
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_DPAD_LEFT, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Left));
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_DPAD_RIGHT, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Right));
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_DPAD_UP, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Up));
+	inputMappingController->AddInputBinding(XINPUT_GAMEPAD_DPAD_DOWN, TriggerType::Down, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Down));
+	inputManager.GetPlayerController(0)->AddMapping(std::move(inputMappingController));
+	
+	
 
 }
 
@@ -175,6 +218,10 @@ void TRONGame::Load()
 		TRONRegistries::GameSoundRegistry.Register("SFX1", soundSystem->RegisterAudio("../Data/Sounds/S_SFX1.wav"));
 		TRONRegistries::GameSoundRegistry.Register("Explosion", soundSystem->RegisterAudio("../Data/Sounds/S_Explosion.wav"));
 
+		TRONRegistries::GameSoundRegistry.Register("Back", soundSystem->RegisterAudio("../Data/Sounds/S_Back.wav"));
+		TRONRegistries::GameSoundRegistry.Register("Select", soundSystem->RegisterAudio("../Data/Sounds/S_Select.wav"));
+		TRONRegistries::GameSoundRegistry.Register("Save", soundSystem->RegisterAudio("../Data/Sounds/S_Saved.wav"));
+
 		LoadMainMenu();
 
 		dae::SceneManager::GetInstance().SelectScene("Menu");
@@ -191,6 +238,6 @@ std::string_view TRONGame::GetGameTitle()
 
 void TRONGame::ChangeGameMode(GameMode gamemode)
 {
-	assert(!m_IsInLevel && "You cannot change gamemode inside of the level!");
+	//assert(!m_IsInLevel && "You cannot change gamemode inside of the level!");
 	m_SelectedGameMode = gamemode;
 }

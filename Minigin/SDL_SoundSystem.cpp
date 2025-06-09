@@ -121,7 +121,7 @@ private:
 			std::lock_guard lock(m_Mutex);
 			if (m_isLoaded)
 			{
-				Mix_VolumeChunk(m_pChunk, static_cast<int>(volume * MIX_MAX_VOLUME));
+				Mix_VolumeChunk(m_pChunk, static_cast<int>(std::min(volume, static_cast<float>(MIX_MAX_VOLUME))));
 			}
 		}
 	

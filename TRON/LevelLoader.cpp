@@ -12,6 +12,38 @@
 
 using json = nlohmann::json;
 
+std::unique_ptr<Level> JSONLevelLoader::LoadSinglePlayer(const std::string& filePath, dae::Scene& scene)
+{
+	return std::move(Parse(filePath, scene));
+}
+
+std::unique_ptr<Level> JSONLevelLoader::LoadCoOp(const std::string& filePath, dae::Scene& scene)
+{
+	std::unique_ptr<Level> level = std::move(Parse(filePath, scene));
+
+	std::filesystem::path path{ filePath };
+	std::ifstream file{ path };
+
+	json levelJson;
+	file >> levelJson;
+
+	//dae::InputManager::GetInstance().GetPlayerController(0)->ClearMapping();
+	auto gridComponent = level->m_GridObject->GetComponent<GridComponent>();
+
+	auto spawnpoint = levelJson["player_spawnpoint"];
+	dae::GameObject* player = TRONGameObjects::PrefabFactory{}.CreatePlayerTank(scene, 1);
+	glm::vec2 positionInWorld = gridComponent->GetPositionAt(static_cast<int>(spawnpoint.at("x")), static_cast<int>(spawnpoint.at("y")));
+	player->SetPosition(positionInWorld.x, positionInWorld.y);
+	level->m_Players.emplace_back(player);
+
+	return level;
+}
+
+std::unique_ptr<Level> JSONLevelLoader::LoadVS(const std::string& , dae::Scene&)
+{
+	return std::unique_ptr<Level>();
+}
+
 std::unique_ptr<Level> JSONLevelLoader::Parse(const std::string& filePath, dae::Scene& scene)
 {
 		

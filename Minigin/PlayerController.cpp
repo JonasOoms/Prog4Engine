@@ -63,9 +63,9 @@ public:
 		}
 	}
 
-	void AddMapping(InputMapping* mapping)
+	void AddMapping(std::unique_ptr<InputMapping>&& mapping)
 	{
-		m_pInputMapping.reset(mapping);
+		m_pInputMapping = std::move(mapping);
 	}
 
 	void ClearMapping()
@@ -121,9 +121,9 @@ void PlayerController::PollController(const SDL_Event& event)
 	m_pImpl->PollController(event);
 }
 
-void PlayerController::AddMapping(InputMapping* mapping)
+void PlayerController::AddMapping(std::unique_ptr<InputMapping>&& mapping)
 {
-	m_pImpl->AddMapping(mapping);
+	m_pImpl->AddMapping(std::move(mapping));
 }
 
 void PlayerController::ClearMapping()

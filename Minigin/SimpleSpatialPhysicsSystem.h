@@ -73,6 +73,7 @@ public:
 	void PhysicsUpdate(float deltaTime) override;
 	void RegisterPhysicsComponent(PhysicsComponent* pPhysicsComponent) override;
 	void UnregisterPhysicsComponent(PhysicsComponent* pPhysicsComponent) override;
+	void UnregisterAllPhysicsComponents() override;
 	virtual void DebugDraw() override;
 	void Notify(const Event& event, EventDispatcher* subject) override;
 private:

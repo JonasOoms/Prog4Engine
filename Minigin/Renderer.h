@@ -36,7 +36,13 @@ namespace dae
 		void RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height, const SDL_Rect* srcRect) const;
 		void RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height, const SDL_Rect* srcRect, float angle) const;
 
+		/// <summary>
+		/// Costly, avoid calling this
+		/// </summary>
+		//void RenderString(const std::string& string, const float x, const float y, int size, const SDL_Color& color);
+
 		void DrawString(const std::string& text, Font* pFont, const glm::vec2& position, SDL_Color color, float size = 12.f) const;
+		void DrawString(const std::string& text, Font* pFont, const glm::vec2& position, SDL_Color color, float width, float height) const;
 		void DrawSquare(int x, int y, int size, SDL_Color color);
 		void DrawRect(Engine::Rect, SDL_Color color);
 		void DrawPolygon(const std::vector<glm::vec2>& points, SDL_Color color);

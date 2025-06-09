@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 VelocityBasedSpriteRenderer::VelocityBasedSpriteRenderer(float width, float height):
+	RenderComponent(),
 	m_Width{width},
 	m_Height{height}
 {

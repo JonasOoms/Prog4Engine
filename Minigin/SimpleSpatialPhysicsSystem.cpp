@@ -318,6 +318,14 @@ void SimpleSpatialPhysicsSystem::UnregisterPhysicsComponent(PhysicsComponent* pP
 
 }
 
+/// <summary>
+/// Dangerous! Make sure you know what youre doing
+/// </summary>
+void SimpleSpatialPhysicsSystem::UnregisterAllPhysicsComponents()
+{
+	m_pPhysicsAgents.clear();
+}
+
 void SimpleSpatialPhysicsSystem::DebugDraw()
 {
 	//m_pCellSpace->RenderCells();

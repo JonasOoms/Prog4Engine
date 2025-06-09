@@ -37,7 +37,7 @@ private:
 	int m_SelectedLevel{0};
 	std::unique_ptr<Level> m_Level;
 	std::unique_ptr<EventDispatcher> m_EventDispatcher;
-	uint8_t m_EnemiesLeft{ 0 };
+	size_t m_EnemiesLeft{ 0 };
 	// Inherited via Observer
 	void Notify(const Event& event, EventDispatcher* subject) override;
 };

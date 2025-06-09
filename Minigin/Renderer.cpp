@@ -114,15 +114,31 @@ void dae::Renderer::DrawString(const std::string& text, Font* pFont, const glm::
 	const auto surf = TTF_RenderText_Blended(pFont->GetFont(), text.c_str(), color);
 	if (surf == nullptr)
 	{
-		//throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
+		throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
 	}
 	auto texture = SDL_CreateTextureFromSurface(dae::Renderer::GetInstance().GetSDLRenderer(), surf);
 	if (texture == nullptr)
 	{
-		//throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
+		throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 	}
 	SDL_FreeSurface(surf);
 	RenderTexture(*std::make_shared<Texture2D>(texture), position.x, position.y, size, size, nullptr, 0.f);
+}
+
+void dae::Renderer::DrawString(const std::string& text, Font* pFont, const glm::vec2& position, SDL_Color color, float width, float height) const
+{
+	const auto surf = TTF_RenderText_Blended(pFont->GetFont(), text.c_str(), color);
+	if (surf == nullptr)
+	{
+		throw std::runtime_error(std::string("Render text failed: ") + SDL_GetError());
+	}
+	auto texture = SDL_CreateTextureFromSurface(dae::Renderer::GetInstance().GetSDLRenderer(), surf);
+	if (texture == nullptr)
+	{
+		throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
+	}
+	SDL_FreeSurface(surf);
+	RenderTexture(*std::make_shared<Texture2D>(texture), position.x, position.y, width, height, nullptr, 0.f);
 }
 
 void dae::Renderer::DrawSquare(int x, int y, int size, SDL_Color color)
@@ -173,10 +189,9 @@ void dae::Renderer::DrawPoint(int x, int y, SDL_Color color) {
 	SDL_Renderer* renderer = GetSDLRenderer();
 	if (!renderer) return;
 
-	// Set the drawing color
+	
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
-	// Draw the point
 	SDL_RenderDrawPoint(renderer, x, y);
 }
 

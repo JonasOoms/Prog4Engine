@@ -21,6 +21,7 @@ class ActivateCommand : public Command
 {
 public:
 	ActivateCommand(dae::GameObject* activator, std::vector<ActivationBoxComponent*>&& activationBoxes);
+	ActivateCommand(dae::GameObject* activator, const std::vector<ActivationBoxComponent*>& activationBoxes);
 	void Execute() override;
 private:
 	dae::GameObject* m_Activator;

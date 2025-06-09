@@ -4,6 +4,7 @@
 #include "ServiceLocator.h"
 #include "GameRegistries.h"
 #include "LinearBulletComponent.h"
+#include "VelocityBasedSpriteRenderer.h"
 
 PlayerShootCommand::PlayerShootCommand(TurretComponent* component, dae::Scene& scene , float speed, float CooldownTime):
 	m_Component{component},
@@ -26,7 +27,7 @@ void PlayerShootCommand::Execute()
 		glm::vec2 velocity{ cosf(angle), sinf(angle) };
 		velocity = glm::normalize(velocity) * m_Speed;
 		TRONGameObjects::PrefabFactory{}.CreateProjectile(m_Scene, m_Component->GetOwner()->GetParent(), velocity * m_Speed);
-		ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 128.f);
+		ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 5.f);
 		
 	}
 
@@ -40,11 +41,16 @@ EnemyShootCommand::EnemyShootCommand(dae::GameObject* enemy, float speed):
 
 void EnemyShootCommand::Execute()
 {
+
+	constexpr glm::vec2 size{ 15.f,15.f };
 	dae::Scene& scene = dae::SceneManager::GetInstance().GetCurrentScene();
 
 	auto go = std::make_unique<dae::GameObject>();
-	go->AddComponent<LinearBulletComponent>(glm::vec2{ 15,15 }, m_Speed, m_Direction);
+	go->AddComponent<LinearBulletComponent>(size, m_Speed, m_Direction);
 	
+	go->AddComponent<VelocityBasedSpriteRenderer>(size.x, size.y)->SetTexture("Textures/T_EnemyProjectile.png");
+	
+
 	glm::vec2 middle = m_Enemy->GetComponent<PhysicsComponent>()->GetPosition();
 
 	go->SetPosition(middle.x, middle.y);

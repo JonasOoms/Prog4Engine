@@ -1,6 +1,7 @@
 #pragma once
 #include <IGame.h>
 #include "LevelLoader.h"
+#include "HighScoreBuffer.h"
 
 
 enum class GameMode
@@ -17,7 +18,8 @@ public:
 	~TRONGame();
 
 	void LoadMainMenu();
-	void LoadLevel();
+	void LoadLevel(GameMode gamemode);
+	void LoadScoreScreen();
 
 	// Inherited via IGame
 	void Load() override;
@@ -28,11 +30,25 @@ public:
 	void ChangeGameMode(GameMode gamemode);
 	GameMode GetGameMode() const { return m_SelectedGameMode; }
 
-private:
+	int CurrentScore{};
 
+	void PutScore(const std::string& name, int score) { m_HighScores.Put(name, score); }
+	const HighScoreBuffer& GetHighScoreBuffer() { return m_HighScores; }
+
+private:
+	std::function<void()> LoadSingleplayerLevel = [this] {
+		LoadLevel(GameMode::Singleplayer);
+		};
+
+	std::function<void()> LoadCoopLevel = [this] {
+		LoadLevel(GameMode::Coop);
+		};
+
+	
 	bool m_IsInLevel{};
 	GameMode m_SelectedGameMode{};
-	
+	HighScoreBuffer m_HighScores;
+
 
 };
 

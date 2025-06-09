@@ -17,6 +17,7 @@ public:
 	virtual void PhysicsUpdate(float deltaTime) = 0;
 	virtual void RegisterPhysicsComponent(PhysicsComponent* pPhysicsComponent) = 0;
 	virtual void UnregisterPhysicsComponent(PhysicsComponent* pPhysicsComponent) = 0;
+	virtual void UnregisterAllPhysicsComponents() = 0;
 	virtual void DebugDraw() {};
 
 	// Physics Utility

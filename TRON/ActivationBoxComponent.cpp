@@ -37,6 +37,12 @@ ActivateCommand::ActivateCommand(dae::GameObject* activator, std::vector<Activat
 {
 }
 
+ActivateCommand::ActivateCommand(dae::GameObject* activator, const std::vector<ActivationBoxComponent*>& activationBoxes):
+	m_Activator{ activator },
+	m_ActivationBoxes{activationBoxes}
+{
+}
+
 void ActivateCommand::Execute()
 {
 	for (ActivationBoxComponent* activationBox : m_ActivationBoxes)
