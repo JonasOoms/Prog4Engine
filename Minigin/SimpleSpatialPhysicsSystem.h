@@ -88,5 +88,9 @@ private:
 	std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance) override;
 	std::optional<HitInfo> Raycast(const glm::vec2& origin, const glm::vec2& direction, float maxDistance, PhysicsComponent* pIgnore);
 
+
+	// Inherited via PhysicsSystem
+	size_t GetPhysicsComponentCount() override;
+
 };
 

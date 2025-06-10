@@ -10,5 +10,8 @@ public:
 	void UnregisterAllPhysicsComponents() override {};
 	std::optional<HitInfo> Raycast(const glm::vec2&, const glm::vec2&, float) override { return std::nullopt; };
 	std::optional<HitInfo> Raycast(const glm::vec2&, const glm::vec2&, float, PhysicsComponent*) override { return std::nullopt; };
+
+	// Inherited via PhysicsSystem
+	size_t GetPhysicsComponentCount() override;
 };
 

@@ -468,3 +468,8 @@ std::optional<HitInfo> SimpleSpatialPhysicsSystem::Raycast(const glm::vec2& orig
 
 	return closestHit;
 }
+
+size_t SimpleSpatialPhysicsSystem::GetPhysicsComponentCount()
+{
+	return m_pPhysicsAgents.size();
+}

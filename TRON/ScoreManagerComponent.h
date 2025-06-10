@@ -32,9 +32,6 @@ public:
 	std::unique_ptr<ScoreGUIState> Interact(ScoreManagerComponent& scoreManager, ScoreManagerAction action) override;
 
 	void Render(ScoreManagerComponent& scoreManager) override;
-private:
-	int m_SelectedButton{};
-
 };
 
 class SubmitScoreState : public ScoreGUIState

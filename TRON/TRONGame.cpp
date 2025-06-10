@@ -33,6 +33,7 @@
 #include "GameModeSelectorLoadingComponent.h"
 #include "ActivationBoxComponent.h"
 #include "ScoreManagerComponent.h"
+#include "BenchmarkPhysicsSystem.h"
 
 TRONGame::TRONGame():
 	m_HighScores{ "../Data/SaveGame/TronScores.json" }
@@ -209,7 +210,7 @@ void TRONGame::Load()
 {
 
 		ServiceLocator::RegisterSoundSystem(std::make_unique<SDL_SoundSystem>());
-		ServiceLocator::RegisterPhysicsSystem(std::make_unique<SimpleSpatialPhysicsSystem>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight));
+		ServiceLocator::RegisterPhysicsSystem(std::make_unique<BenchmarkPhysicsSystem>(std::move(std::make_unique<SimpleSpatialPhysicsSystem>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight))));
 
 
 		auto soundSystem = ServiceLocator::GetSoundSystem();
