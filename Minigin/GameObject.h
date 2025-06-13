@@ -2,8 +2,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "Transform.h"
 #include "Component.h"
+#include "RenderComponent.h"
 
 namespace dae
 {
@@ -58,6 +60,7 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
+
 		// If nullptr, is scene root
 		GameObject* m_Parent{};
 		std::vector<GameObject*> m_Children;
@@ -65,6 +68,7 @@ namespace dae
 		bool m_DeleteFlag{};
 		Transform m_transform;
 		std::vector<std::unique_ptr<Component>> m_Components;
+		std::vector<RenderComponent*> m_RenderComponents;
 		std::unique_ptr<EventDispatcher> m_pGameObjectEventDispatcher;
 		
 		void RemoveChild(GameObject* object, bool sendEvent);
@@ -106,6 +110,13 @@ namespace dae
 	{
 		auto pComponent = std::make_unique<componentType>(std::forward<Args>(args)...);
 		((Component*)pComponent.get())->SetOwner(this);
+
+		if constexpr (std::is_base_of_v<RenderComponent, componentType>)
+		{
+			m_RenderComponents.emplace_back(static_cast<RenderComponent*>(pComponent.get()));
+		}
+
+
 		m_Components.emplace_back(std::move(pComponent));
 		return (componentType*)(m_Components.back().get());
 	}
@@ -122,6 +133,11 @@ namespace dae
 			return false;
 			});
 		(*itComponent).get()->DeleteComponent();
+		auto renderComponentIt = std::find(m_RenderComponents.begin(), m_RenderComponents.end(), (*itComponent).get());
+		if (renderComponentIt != m_RenderComponents.end())
+		{
+			m_RenderComponents.erase(renderComponentIt);
+		}
 		return true;
 	}
 }

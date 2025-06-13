@@ -56,27 +56,26 @@ void dae::Scene::EnterScene()
 
 void Scene::Update(float deltaTime)
 {
-	for(auto& object : m_objects)
+	for (int i = 0; i < m_objects.size(); ++i)
 	{
-		object->Update(deltaTime);
+		m_objects[i]->Update(deltaTime);
 	}
 }
 
 void dae::Scene::FixedUpdate(float fixedTime)
 {
-	for (auto& object : m_objects)
+	for (int i = 0; i < m_objects.size(); ++i)
 	{
-		object->FixedUpdate(fixedTime);
+		m_objects[i]->FixedUpdate(fixedTime);
 	}
 }
 
 void dae::Scene::LateUpdate(float deltaTime)
 {
-	for (auto& object : m_objects)
+	for (int i = 0; i < m_objects.size(); ++i)
 	{
-		object->LateUpdate(deltaTime);
+		m_objects[i]->LateUpdate(deltaTime);
 	}
-
 	std::erase_if(m_objects, [](const auto& object)
 		{
 			return object->GetDeleteFlag();

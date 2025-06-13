@@ -44,6 +44,10 @@ private:
 		LoadLevel(GameMode::Coop);
 		};
 
+	std::function<void()> LoadVSLevel = [this] {
+		LoadLevel(GameMode::VS);
+		};
+
 	
 	bool m_IsInLevel{};
 	GameMode m_SelectedGameMode{};

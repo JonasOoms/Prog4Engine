@@ -8,6 +8,7 @@
 #include "IEnemy.h"
 #include "InputManager.h"
 #include "PlayerHandlerComponent.h"
+#include "InputManager.h"
 
 LevelManagerComponent::LevelManagerComponent(TRONGame* game, TextRenderComponent* scoreCounter, TextRenderComponent* lifeCounter, TextRenderComponent* highScoreCounter):
 	m_Game{game},
@@ -29,14 +30,14 @@ void LevelManagerComponent::BeginPlay()
 
 void LevelManagerComponent::EndPlay()
 {
-	ClearLevel();
+	//ClearLevel();
 }
 
 void LevelManagerComponent::Update(float)
 {
 	if (m_ExitLevel)
 	{
-		//m_Game->SetIsInLevel(false);
+		ClearLevel();
 		m_Game->CurrentScore = m_Score;
 		m_Lives = 3;
 		m_Score = 0;
@@ -44,10 +45,18 @@ void LevelManagerComponent::Update(float)
 		m_LoadNextLevel = false;
 		TRONGame* game = m_Game;
 		dae::SceneManager::GetInstance().GetCurrentScene().RemoveAll();
-		game->LoadScoreScreen();
+		if (game->GetGameMode() == GameMode::VS)
+		{
+			game->LoadMainMenu();
+		}
+		else
+		{
+			game->LoadScoreScreen();
+		}
 	}
 	else if (m_LoadNextLevel)
 	{
+		ClearLevel();
 		switch (m_SelectedLevel % 3)
 		{
 		case 0:
@@ -119,19 +128,32 @@ void LevelManagerComponent::LoadLevel(const std::string& filePath)
 
 	m_EnemiesLeft = enemyAmount;
 
+
+	dae::InputManager::GetInstance().GetPlayerController(-1)->GetInputMapping()->AddInputBinding(SDLK_F1, TriggerType::Released, std::make_unique<SkipLevelCommand>(this));
+
 	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 20.f);
+}
+
+void LevelManagerComponent::SwitchNextLevel()
+{
+	++m_SelectedLevel; 
+	m_ExitLevel = false; 
+	m_LoadNextLevel = true;
+
 }
 
 void LevelManagerComponent::ClearLevel()
 {
 	if (m_Level)
 	{
+
+		m_Level->m_Diamond->Destroy();
 		m_Level->m_GridPathRenderer->Destroy();
 		m_Level->m_GridObject->Destroy();
 
 		for (dae::GameObject* player : m_Level->m_Players)
 		{
-			player->RemoveComponent<PlayerTankHandlerComponent>();
+			//player->RemoveComponent<PlayerTankHandlerComponent>();
 			player->Destroy();
 		}
 
@@ -146,6 +168,7 @@ void LevelManagerComponent::ClearLevel()
 		}
 
 		ServiceLocator::GetPhysicsSystem()->UnregisterAllPhysicsComponents();
+		dae::InputManager::GetInstance().ClearAllMappings();
 
 	}
 }
@@ -229,4 +252,15 @@ void LevelManagerComponent::Notify(const Event& event, EventDispatcher* )
 
 
 
+}
+
+SkipLevelCommand::SkipLevelCommand(LevelManagerComponent* level):
+	m_LevelManager{level}
+{
+}
+
+void SkipLevelCommand::Execute()
+{
+	m_LevelManager->SwitchNextLevel();
+	//m_LevelManager->ClearLevel();
 }

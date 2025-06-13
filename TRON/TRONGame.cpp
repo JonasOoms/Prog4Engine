@@ -105,8 +105,14 @@ void TRONGame::LoadMainMenu()
 
 	go = std::make_unique<dae::GameObject>();
 	auto coopBox = go->AddComponent<ActivationBoxComponent>(LoadCoopLevel);
-	go->AddComponent<PhysicsComponent>(glm::vec2{ 130,100 });
+	go->AddComponent<PhysicsComponent>(glm::vec2{ 130,150 });
 	go->SetPosition(dae::Minigin::windowWidth / 2 + 75, dae::Minigin::windowHeight / 2 - 11);
+	scene.Add(std::move(go));
+
+	go = std::make_unique<dae::GameObject>();
+	auto vsBox = go->AddComponent<ActivationBoxComponent>(LoadVSLevel);
+	go->AddComponent<PhysicsComponent>(glm::vec2{ 100,150 });
+	go->SetPosition(dae::Minigin::windowWidth / 2 - 175, dae::Minigin::windowHeight / 2 - 11);
 	scene.Add(std::move(go));
 
 
@@ -119,7 +125,7 @@ void TRONGame::LoadMainMenu()
 	tank->SetPosition(dae::Minigin::windowWidth / 2 - 20.f / 2, dae::Minigin::windowHeight / 2 - 20.f / 2);
 
 
-	auto activationBoxes = std::vector{ singlePlayerBox, coopBox };
+	auto activationBoxes = std::vector{ singlePlayerBox, coopBox, vsBox };
 	go = std::make_unique<dae::GameObject>();
 	go->AddComponent<GameModeSelectorLoadingComponent>(this, tank.get(), activationBoxes);
 	scene.Add(std::move(go));
@@ -162,8 +168,16 @@ void TRONGame::LoadLevel(GameMode gamemode)
 	scene.Add(std::move(ScoreCounter));
 
 	go = std::make_unique<dae::GameObject>();
+	auto fpsText = go->AddComponent<TextRenderComponent>("FPS: ", "Fonts/Volter_Goldfish.ttf", 11);
+	text->SetColor(SDL_Color{ 255,255,255,100 });
+	go->AddComponent<FPSComponent>(fpsText);
+	scene.Add(std::move(go));
+
+	go = std::make_unique<dae::GameObject>();
 	go->AddComponent<LevelManagerComponent>(this, scoreText, lifeCounterText ,nullptr);
 	scene.Add(std::move(go));
+
+
 
 	
 }
@@ -180,6 +194,12 @@ void TRONGame::LoadScoreScreen()
 
 	auto go = std::make_unique<dae::GameObject>();
 	auto scoreManager = go->AddComponent<ScoreManagerComponent>(this);
+	scene.Add(std::move(go));
+
+	go = std::make_unique<dae::GameObject>();
+	auto text = go->AddComponent<TextRenderComponent>("FPS: ", "Fonts/Volter_Goldfish.ttf", 11);
+	text->SetColor(SDL_Color{ 255,255,255,100 });
+	go->AddComponent<FPSComponent>(text);
 	scene.Add(std::move(go));
 	
 	auto inputMappingKeyboard = std::make_unique<InputMapping>();
@@ -210,7 +230,7 @@ void TRONGame::Load()
 {
 
 		ServiceLocator::RegisterSoundSystem(std::make_unique<SDL_SoundSystem>());
-		ServiceLocator::RegisterPhysicsSystem(std::make_unique<BenchmarkPhysicsSystem>(std::move(std::make_unique<SimpleSpatialPhysicsSystem>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight))));
+		ServiceLocator::RegisterPhysicsSystem(std::make_unique<SimpleSpatialPhysicsSystem>((float)dae::Minigin::windowWidth, (float)dae::Minigin::windowHeight));
 
 
 		auto soundSystem = ServiceLocator::GetSoundSystem();

@@ -24,6 +24,7 @@ void AITankComponent::ComponentOwnerInitialized()
 {
 	m_MoveCommand = std::make_unique<SimpleMoveCommand>(GetOwner(), glm::vec2{ -1,0 }, m_Speed);
 	m_ShootCommand = std::make_unique<EnemyShootCommand>(GetOwner(), 200.f);
+	m_CachedPhysicsComponent = GetOwner()->GetComponent<PhysicsComponent>();
 	m_IsReady = true;
 }
 
@@ -78,7 +79,8 @@ std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComp
 
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
 
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	// TODO: Cache the ai tanks physics component
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 	
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
@@ -180,7 +182,7 @@ void TankPatrolState::DebugDraw(AITankComponent& AiTankComponent)
 		renderer.DrawPoint(static_cast<int>(node->worldPosition.x), static_cast<int>(node->worldPosition.y), SDL_Color{ 255,255,0,255 });
 	}
 
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
 		PhysicsComponent* targetPhysicsComponent = AiTankComponent.GetTarget(playerIndex)->GetComponent<PhysicsComponent>();
@@ -207,7 +209,7 @@ bool TankPatrolState::WasCurrentTravelPointReached(AITankComponent& AiTankCompon
 std::unique_ptr<AITankState> TankEngageState::Update(AITankComponent& AiTankComponent, float )
 {
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
@@ -309,7 +311,7 @@ bool TankEngageState::WasCurrentTravelPointReached(AITankComponent& AiTankCompon
 std::unique_ptr<AITankState> TankShootState::Update(AITankComponent& AiTankComponent, float dt )
 {
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
@@ -350,7 +352,7 @@ std::unique_ptr<AITankState> TankShootState::Update(AITankComponent& AiTankCompo
 void TankShootState::DebugDraw(AITankComponent& AiTankComponent)
 {
 	dae::Renderer& renderer = dae::Renderer::GetInstance();
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
 		dae::GameObject* player = AiTankComponent.GetTarget(playerIndex);
@@ -364,6 +366,4 @@ void TankShootState::DebugDraw(AITankComponent& AiTankComponent)
 		glm::vec2 delta = position + glm::normalize(target - position) * 200.f;
 		renderer.drawLine(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(delta.x), static_cast<int>(delta.y), SDL_Color{ 255, 255, 0, 255 });
 	}
-
-	//std::optional<HitInfo> optHitInfo = ps->Raycast(physicsComponent->GetPosition(), targetPhysicsComponent->GetPosition() - physicsComponent->GetPosition(), 200, physicsComponent);
 }

@@ -63,6 +63,12 @@ public:
 		}
 	}
 
+
+	InputMapping* GetMapping()
+	{
+		return m_pInputMapping.get();
+	}
+
 	void AddMapping(std::unique_ptr<InputMapping>&& mapping)
 	{
 		m_pInputMapping = std::move(mapping);
@@ -119,6 +125,11 @@ PlayerController::~PlayerController() = default;
 void PlayerController::PollController(const SDL_Event& event)
 {
 	m_pImpl->PollController(event);
+}
+
+InputMapping* PlayerController::GetInputMapping()
+{
+	return m_pImpl->GetMapping();
 }
 
 void PlayerController::AddMapping(std::unique_ptr<InputMapping>&& mapping)

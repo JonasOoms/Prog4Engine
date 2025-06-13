@@ -84,9 +84,6 @@ dae::Minigin::~Minigin()
 {
 	Renderer::GetInstance().Destroy();
 
- 
-
-
 	SDL_DestroyWindow(g_window);
 	g_window = nullptr;
 	SDL_Quit();

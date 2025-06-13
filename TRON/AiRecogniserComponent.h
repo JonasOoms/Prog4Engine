@@ -60,7 +60,7 @@ public:
 	SimpleMoveCommand* GetMoveCommand() { return m_MoveCommand.get(); }
 	
 
-
+	PhysicsComponent* GetPhysicsComponent() { return m_CachedPhysicsComponent; }
 	GridComponent* GetGridComponent() { return m_Grid; }
 	dae::GameObject* GetTarget(int index) { return m_Target->at(index); }
 	size_t GetTargetCount() { return m_Target->size(); }
@@ -72,6 +72,9 @@ public:
 	void Hurt(int damage) override;
 	int GetHealth() override;
 private:
+
+	PhysicsComponent* m_CachedPhysicsComponent{};
+
 	std::unique_ptr<SimpleMoveCommand> m_MoveCommand;
 	std::unique_ptr<AIRecogniserState> m_State;
 	std::unique_ptr<EventDispatcher> m_EventDispatcher;

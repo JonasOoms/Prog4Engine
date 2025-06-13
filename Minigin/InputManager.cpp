@@ -11,7 +11,6 @@ dae::InputManager::InputManager()
 	m_pKeyboardPlayerController = std::make_unique<PlayerController>(-1, true);
 	m_pPlayerControllers.reserve(XUSER_MAX_COUNT);
 
-	// TODO: Make creating controllers not on construction
 	for (int i = 0; i < XUSER_MAX_COUNT; i++)
 	{
 		m_pPlayerControllers.push_back(std::make_unique<PlayerController>(i, false));

@@ -1,7 +1,47 @@
 [
     {
+        "name": "RTY",
+        "score": 10350
+    },
+    {
+        "name": "DKO",
+        "score": 10350
+    },
+    {
+        "name": "TRS",
+        "score": 5000
+    },
+    {
+        "name": "FLN",
+        "score": 3900
+    },
+    {
+        "name": "FLN",
+        "score": 2800
+    },
+    {
+        "name": "FLN",
+        "score": 2600
+    },
+    {
         "name": "ZYN",
         "score": 2300
+    },
+    {
+        "name": "GIG",
+        "score": 2250
+    },
+    {
+        "name": "FLN",
+        "score": 2250
+    },
+    {
+        "name": "FLN",
+        "score": 2200
+    },
+    {
+        "name": "FLI",
+        "score": 2100
     },
     {
         "name": "PNO",
@@ -10,6 +50,22 @@
     {
         "name": "FLN",
         "score": 1650
+    },
+    {
+        "name": "JON",
+        "score": 1250
+    },
+    {
+        "name": "FLX",
+        "score": 1100
+    },
+    {
+        "name": "FLN",
+        "score": 300
+    },
+    {
+        "name": "FLN",
+        "score": 200
     },
     {
         "name": "AGO",

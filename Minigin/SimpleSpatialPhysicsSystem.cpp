@@ -329,14 +329,14 @@ void SimpleSpatialPhysicsSystem::UnregisterAllPhysicsComponents()
 void SimpleSpatialPhysicsSystem::DebugDraw()
 {
 	//m_pCellSpace->RenderCells();
-	for (const auto& agent : m_pPhysicsAgents)
+	/*for (const auto& agent : m_pPhysicsAgents)
 	{
 
 		Engine::Rect box = agent->GetBoundingBox();
 		dae::Renderer::GetInstance().DrawRect(box, { 0, 255, 0, 255 });
 
 		glm::vec2 pos = agent->GetOwner()->GetTransform().GetWorldPosition();
-	}
+	}*/
 }
 
 void SimpleSpatialPhysicsSystem::Notify(const Event& event, EventDispatcher*)

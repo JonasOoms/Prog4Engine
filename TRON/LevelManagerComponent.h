@@ -5,6 +5,9 @@
 #include <memory>
 #include "TRONGame.h"
 #include "TextRenderComponent.h"
+#include "Command.h"
+
+
 
 class LevelManagerComponent final : public Component, public Observer
 {
@@ -18,6 +21,10 @@ public:
 	virtual void Update(float deltaTime) override;
 
 	EventDispatcher* GetEventDispatcher() { return m_EventDispatcher.get(); }
+
+	void SwitchNextLevel();
+
+	void ClearLevel();
 private:
 
 	TRONGame* m_Game{};
@@ -30,7 +37,6 @@ private:
 	
 
 	void LoadLevel(const std::string& filePath);
-	void ClearLevel();
 
 	bool m_ExitLevel{};
 	bool m_LoadNextLevel{};
@@ -42,3 +48,12 @@ private:
 	void Notify(const Event& event, EventDispatcher* subject) override;
 };
 
+class SkipLevelCommand final : public Command
+{
+public:
+	SkipLevelCommand(LevelManagerComponent* level);
+	void virtual Execute() override;
+
+private:
+	LevelManagerComponent* m_LevelManager{};
+};

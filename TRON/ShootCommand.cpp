@@ -26,8 +26,14 @@ void PlayerShootCommand::Execute()
 
 		glm::vec2 velocity{ cosf(angle), sinf(angle) };
 		velocity = glm::normalize(velocity) * m_Speed;
-		TRONGameObjects::PrefabFactory{}.CreateProjectile(m_Scene, m_Component->GetOwner()->GetParent(), velocity * m_Speed);
-		ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 5.f);
+		if (m_Component->GetOwner())
+		{
+			if (TRONGameObjects::PrefabFactory{}.CreateProjectile(m_Scene, m_Component->GetOwner()->GetParent(), velocity * m_Speed))
+			{
+				ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 5.f);
+			}
+		}
+			
 		
 	}
 
@@ -50,7 +56,7 @@ void EnemyShootCommand::Execute()
 	
 	go->AddComponent<VelocityBasedSpriteRenderer>(size.x, size.y)->SetTexture("Textures/T_EnemyProjectile.png");
 	
-
+	// TODO: Try to cache this
 	glm::vec2 middle = m_Enemy->GetComponent<PhysicsComponent>()->GetPosition();
 
 	go->SetPosition(middle.x, middle.y);

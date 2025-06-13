@@ -168,6 +168,7 @@
     <ClCompile Include="LevelManagerComponent.cpp" />
     <ClCompile Include="LinearBulletComponent.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerAsEnemyHandler.cpp" />
     <ClCompile Include="PlayerControllerCommand.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PlayerControllerMoveCommand.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="SimpleMoveCommand.cpp" />
     <ClCompile Include="TankPhysicsComponent.cpp" />
     <ClCompile Include="TankRendererComponent.cpp" />
+    <ClCompile Include="TeleportCrystalComponent.cpp" />
     <ClCompile Include="TRONGame.cpp" />
     <ClCompile Include="TurretAngleChangeCommand.cpp" />
     <ClCompile Include="TurretComponent.cpp" />
@@ -208,6 +210,7 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="LevelManagerComponent.h" />
     <ClInclude Include="LinearBulletComponent.h" />
+    <ClInclude Include="PlayerAsEnemyHandler.h" />
     <ClInclude Include="PlayerControllerCommand.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerControllerMoveCommand.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="SimpleMoveCommand.h" />
     <ClInclude Include="TankPhysicsComponent.h" />
     <ClInclude Include="TankRendererComponent.h" />
+    <ClInclude Include="TeleportCrystalComponent.h" />
     <ClInclude Include="TRONGame.h" />
     <ClInclude Include="TurretAngleChangeCommand.h" />
     <ClInclude Include="TurretComponent.h" />

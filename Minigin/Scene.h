@@ -34,8 +34,11 @@ namespace dae
 	private: 
 		explicit Scene(const std::string& name);
 
+		void FlushPendingAdd();
+
 		std::string m_name;
 		std::vector < std::unique_ptr<GameObject>> m_objects{};
+		std::vector<std::unique_ptr<GameObject>> m_ToAdd{};
 
 		static unsigned int m_idCounter; 
 	};

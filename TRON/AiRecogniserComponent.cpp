@@ -30,6 +30,7 @@ m_Speed{ tankSpeed }
 void AIRecogniserComponent::ComponentOwnerInitialized()
 {
 	m_MoveCommand = std::make_unique<SimpleMoveCommand>(GetOwner(), glm::vec2{ -1,0 }, m_Speed);
+	m_CachedPhysicsComponent = GetOwner()->GetComponent<PhysicsComponent>();
 	m_IsReady = true;
 }
 
@@ -78,7 +79,7 @@ std::unique_ptr<AIRecogniserState> RecogniserPatrolState::Update(AIRecogniserCom
 {
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
 
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{
@@ -171,7 +172,7 @@ bool RecogniserPatrolState::WasCurrentTravelPointReached(AIRecogniserComponent& 
 std::unique_ptr<AIRecogniserState> RecogniserAttackState::Update(AIRecogniserComponent& AiTankComponent, float )
 {
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
-	PhysicsComponent* physicsComponent = AiTankComponent.GetOwner()->GetComponent<PhysicsComponent>();
+	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)
 	{

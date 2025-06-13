@@ -6,6 +6,7 @@
 #include "SimpleMoveCommand.h"
 #include "IEnemy.h"
 #include "ShootCommand.h"
+#include "PhysicsComponent.h"
 
 class AITankState;
 class TankPatrolState;
@@ -22,7 +23,7 @@ public:
 	SimpleMoveCommand* GetMoveCommand() { return m_MoveCommand.get();}
 	EnemyShootCommand* GetShootCommand() { return m_ShootCommand.get();}
 
-
+	PhysicsComponent* GetPhysicsComponent() { return m_CachedPhysicsComponent; }
 	GridComponent* GetGridComponent() { return m_Grid; }
 	dae::GameObject* GetTarget(int index) { return m_Target->at(index); }
 	size_t GetTargetCount() { return m_Target->size(); }
@@ -32,6 +33,7 @@ public:
 	// Inherited via IEnemyHandler
 	EventDispatcher* GetEnemyEventDispatcher() override;
 private:
+	PhysicsComponent* m_CachedPhysicsComponent{};
 	std::unique_ptr<SimpleMoveCommand> m_MoveCommand;
 	std::unique_ptr<EnemyShootCommand> m_ShootCommand;
 	std::unique_ptr<AITankState> m_State;
@@ -62,6 +64,7 @@ public:
 	virtual std::unique_ptr<AITankState> Update(AITankComponent& AiTankComponent, float ds) override;
 	virtual void DebugDraw(AITankComponent& AiTankComponent) override;
 private:
+	PhysicsComponent* m_PhysicsComponent{};
 	bool WasCurrentTravelPointReached(AITankComponent& AiTankComponent);
 	Engine::GraphNode* m_SelectedTravelPoint{};
 	std::queue<Engine::GraphNode*> m_Path;
@@ -75,6 +78,7 @@ public:
 	virtual std::unique_ptr<AITankState> Update(AITankComponent& AiTankComponent, float ds) override;
 	virtual void DebugDraw(AITankComponent& AiTankComponent) override;
 private:
+	PhysicsComponent* m_PhysicsComponent{};
 	bool WasCurrentTravelPointReached(AITankComponent& AiTankComponent);
 	Engine::GraphNode* m_SelectedTravelPoint{};
 	std::queue<Engine::GraphNode*> m_Path;

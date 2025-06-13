@@ -4,6 +4,8 @@
 #include "Renderer.h"
 #include "RenderComponent.h"
 #include "Event.h"
+#include <iostream>
+
 
 dae::GameObject::GameObject():
 	m_transform{this},
@@ -29,10 +31,12 @@ void dae::GameObject::BeginPlay()
 }
 
 void dae::GameObject::Update(float deltaTime) {
-	for (const auto& component : m_Components)
-	{
-		component->Update(deltaTime);
-	}
+
+
+	for (int i = 0, n = static_cast<int>(m_Components.size()); i < n; ++i)
+{
+    m_Components[i]->Update(deltaTime);
+}
 }
 
 void dae::GameObject::FixedUpdate(float fixedTime) 
@@ -54,6 +58,8 @@ void dae::GameObject::LateUpdate(float deltaTime)
 		{
 			return component->IsFlaggedForDelete();
 		});
+
+
 }
 
 void dae::GameObject::DebugDraw() const
@@ -68,21 +74,9 @@ void dae::GameObject::DebugDraw() const
 
 void dae::GameObject::Render() const
 {
-	for (const std::unique_ptr<Component>& component : m_Components)
+	for (auto renderComponent : m_RenderComponents)
 	{
-		
-		
-		
-		
-		//not 100% sure about dynamic cast.
-		// Pros: this approach treats RenderComponents as anything but components, which keeps the logic simple for the component system
-		// Cons: performance heavy when there are many components.
-
-		RenderComponent* toRender = dynamic_cast<RenderComponent*>(component.get()); 
-		if (toRender)
-		{
-			toRender->Render();
-		}
+		renderComponent->Render();
 	}
 }
 
@@ -150,7 +144,7 @@ void dae::GameObject::Destroy()
 	m_DeleteFlag = true;
 	for (dae::GameObject* child : m_Children)
 	{
-		child->m_DeleteFlag = true;
+		child->Destroy();
 	}
 }
 

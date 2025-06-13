@@ -11,6 +11,11 @@ PlayerControllerComponent::PlayerControllerComponent(float speed = 1000.f):
 {
 }
 
+void PlayerControllerComponent::ComponentOwnerInitialized()
+{
+	m_CachedPhysicsComponent = GetOwner()->GetComponent<PhysicsComponent>();
+}
+
 void PlayerControllerComponent::Update(float dt)
 {
   
@@ -20,11 +25,10 @@ void PlayerControllerComponent::Update(float dt)
         if (std::isnan(normalizedMovement.x)) normalizedMovement.x = 0;
 		if (std::isnan(normalizedMovement.y)) normalizedMovement.y = 0;
         
-		PhysicsComponent* physicsComponent = GetOwner()->GetComponent<PhysicsComponent>();
-		if (physicsComponent)
+		if (m_CachedPhysicsComponent)
 		{
 			glm::vec2 velocity = normalizedMovement * m_Speed;
-			physicsComponent->SetVelocity(velocity);
+			m_CachedPhysicsComponent->SetVelocity(velocity);
 			if (velocity.length() > 0.f)
 			{
 				TriggerMovementEvents(normalizedMovement, GetOwner()->GetPosition() + normalizedMovement * m_Speed * dt);

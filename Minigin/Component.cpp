@@ -13,7 +13,11 @@ void Component::DeleteComponent()
 
 void Component::SetOwner(dae::GameObject* owner)
 {
-    m_pOwner = owner;
+	if (!m_pOwner)
+	{
+		m_pOwner = owner;
+	}
+
 	if (m_pOwner)
 	{
 		ComponentOwnerInitialized();
