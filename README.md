@@ -29,5 +29,8 @@ The engine provides a component system where game objects hold a basic transform
 
 By using game objects, we circumvent the problem of creation and deletion of objects in the world, by having the engine take care of object lifetime.
 
+# Scene managing and traveling
+The scene manager provides a way to select new scenes, which makes sure that players can traverse to other scenes, which also sends a message to game objects that a new scene is loaded, so that users can implement behaviour that triggers when new scenes are loaded. This way, users can have dynamic generation of scenes, log important data necessary for traversal or dynamic input bindings depending on the scene, for example.
+
 # Observers
 The engine uses observers as a way to pass messages around. Users can extend the observer class to listen for events coming from EventDispatchers. EventDispatchers send events to interested parties, who subscribe themselves to the dispatcher. These dispatchers send events through the Notify method, where observers parse the events and get the necessary information from it. The event system works with and Event Type, which is an id that denotes a type of event. These event types are important for the event context, which is implemented as a std::any. This makes sure that the event has a light weight way of passing arguments around and observers can std::any_cast the context to whichever one the event type requires. A hashing function is provided in the engine for users to make their own event types.  
