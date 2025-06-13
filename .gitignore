@@ -411,3 +411,12 @@ FodyWeavers.xsd
 # If you also have a lowercase folder…
 !data/
 !data/**
+
+# 1) Make sure Git will descend into the folder
+!3rdParty/
+# 2) Re-include all files and subdirectories under it
+!3rdParty/**
+
+# If you also have a lowercase folder…
+!3rdparty/
+!3rdparty/**
