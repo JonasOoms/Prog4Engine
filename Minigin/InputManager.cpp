@@ -9,12 +9,7 @@
 dae::InputManager::InputManager()
 {
 	m_pKeyboardPlayerController = std::make_unique<PlayerController>(-1, true);
-	m_pPlayerControllers.reserve(XUSER_MAX_COUNT);
-
-	for (int i = 0; i < XUSER_MAX_COUNT; i++)
-	{
-		m_pPlayerControllers.push_back(std::make_unique<PlayerController>(i, false));
-	}
+	
 
 }
 
@@ -43,11 +38,11 @@ bool dae::InputManager::ProcessInput()
 	}
 		m_pKeyboardPlayerController->PollController(e);
 
-	for (int i = 0; i < XUSER_MAX_COUNT; i++)
-	{
-		m_pPlayerControllers[i]->PollController();
-	}
 
+		for (auto& controller : m_pPlayerControllers)
+		{
+			controller.second->PollController();
+		}
 
 	return true;
 }
@@ -58,6 +53,10 @@ PlayerController* dae::InputManager::GetPlayerController(int index)
 	{
 		return m_pKeyboardPlayerController.get();
 	}
+	if (!m_pPlayerControllers.contains(index))
+	{
+		m_pPlayerControllers.emplace(index, std::make_unique<PlayerController>(index, false));
+	}
 	return m_pPlayerControllers[index].get();
 }
 
@@ -66,6 +65,6 @@ void dae::InputManager::ClearAllMappings()
 	m_pKeyboardPlayerController->ClearMapping();
 	for (auto& controller : m_pPlayerControllers)
 	{
-		controller->ClearMapping();
+		controller.second->ClearMapping();
 	}
 }

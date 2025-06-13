@@ -56,7 +56,6 @@ void EnemyShootCommand::Execute()
 	
 	go->AddComponent<VelocityBasedSpriteRenderer>(size.x, size.y)->SetTexture("Textures/T_EnemyProjectile.png");
 	
-	// TODO: Try to cache this
 	glm::vec2 middle = m_Enemy->GetComponent<PhysicsComponent>()->GetPosition();
 
 	go->SetPosition(middle.x, middle.y);

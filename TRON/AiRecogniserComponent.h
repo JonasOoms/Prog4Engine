@@ -81,7 +81,7 @@ private:
 	float m_Speed;
 	GridComponent* m_Grid;
 	std::vector<dae::GameObject*>* m_Target;
-	int m_HitPoints{ 5 };
+	int m_HitPoints{ 3 };
 	bool m_IsReady{ false };
 
 };

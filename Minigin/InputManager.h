@@ -1,6 +1,7 @@
 #pragma once
-#include "Singleton.h"
+#include <map>
 #include <vector>
+#include "Singleton.h"
 #include "PlayerController.h"
 
 namespace dae
@@ -20,7 +21,7 @@ namespace dae
 	private:
 
 		std::unique_ptr<PlayerController> m_pKeyboardPlayerController;
-		std::vector<std::unique_ptr<PlayerController>> m_pPlayerControllers;
+		std::map<int, std::unique_ptr<PlayerController>> m_pPlayerControllers;
 	};
 
 }

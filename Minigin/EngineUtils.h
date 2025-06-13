@@ -82,7 +82,9 @@ namespace Engine
         return (tNear <= tFar) && (tFar >= 0);
     }
 
-    // useful for static vs dynamic objects. 
+    
+    // Credit to Dylan Falconer: https://www.youtube.com/watch?v=3dIiTo7mlnU
+    //useful for static vs dynamic objects. 
     // Changing the problem from does it collide to will it collide
     inline SweepResult SweptAABB(const Engine::Rect& moving, const glm::vec2& velocity, const Engine::Rect& target)
     {

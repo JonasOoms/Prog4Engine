@@ -128,8 +128,9 @@ void LevelManagerComponent::LoadLevel(const std::string& filePath)
 
 	m_EnemiesLeft = enemyAmount;
 
-
-	dae::InputManager::GetInstance().GetPlayerController(-1)->GetInputMapping()->AddInputBinding(SDLK_F1, TriggerType::Released, std::make_unique<SkipLevelCommand>(this));
+	PlayerController* controller = dae::InputManager::GetInstance().GetPlayerController(-1);
+	controller->GetInputMapping()->AddInputBinding(SDLK_F1, TriggerType::Released, std::make_unique<SkipLevelCommand>(this));
+	controller->GetInputMapping()->AddInputBinding(SDLK_F2, TriggerType::Released, std::make_unique<MuteSoundSystemCommand>());
 
 	ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("LevelIntro"), 20.f);
 }

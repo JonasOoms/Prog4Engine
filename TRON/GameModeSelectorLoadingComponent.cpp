@@ -56,6 +56,7 @@ void GameModeSelectorLoadingComponent::BeginPlay()
 	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_S, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ 0,1 }));
 	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_A, TriggerType::Pressed, std::make_unique<PlayerControllerMoveCommand>(playerControllerComponentKeyboard, glm::vec2{ -1,0 }));
 	inputMappingKeyboard->AddInputBinding(SDL_SCANCODE_SPACE, TriggerType::Pressed, std::make_unique<ActivateCommand>(m_Selector, m_ActivationBoxes));
+	inputMappingKeyboard->AddInputBinding(SDLK_F2, TriggerType::Released, std::make_unique<MuteSoundSystemCommand>());
 
 	dae::InputManager::GetInstance().GetPlayerController(-1)->AddMapping(std::move(inputMappingKeyboard));
 	

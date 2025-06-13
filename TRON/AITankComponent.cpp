@@ -79,7 +79,7 @@ std::unique_ptr<AITankState> TankPatrolState::Update(AITankComponent& AiTankComp
 
 	PhysicsSystem* ps = ServiceLocator::GetPhysicsSystem();
 
-	// TODO: Cache the ai tanks physics component
+
 	PhysicsComponent* physicsComponent = AiTankComponent.GetPhysicsComponent();
 	
 	for (int playerIndex{}; playerIndex < AiTankComponent.GetTargetCount(); ++playerIndex)

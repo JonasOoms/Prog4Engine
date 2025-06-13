@@ -55,7 +55,7 @@ GraphNode* Engine::Graph::GetNode(int row, int col)
 
 GraphNode* Engine::Graph::AddNode(int row, int col, glm::vec2 worldPosition)
 {
-    //assert(row >= 0 && col >= 0 && "Row and column must be valid");
+
 
     int idx = GetIndex(row, col);
     auto [it, inserted] = m_NodeMap.emplace(idx, GraphNode(row, col, worldPosition));
@@ -81,7 +81,7 @@ void Engine::Graph::ConnectNodes(GraphNode* a, GraphNode* b)
 std::vector<GraphNode> Engine::Graph::GetNodes() const
 {
     std::vector<GraphNode> result;
-    result.reserve(m_NodeMap.size()); // Optional but efficient
+    result.reserve(m_NodeMap.size()); 
 
     for (auto& [key, node] : m_NodeMap)
     {
@@ -93,10 +93,7 @@ std::vector<GraphNode> Engine::Graph::GetNodes() const
 
 int Engine::Graph::GetIndex(int row, int col) const
 {
-
-    //assert(row >= 0 && row < m_Rows && "Row must be in bounds");
-    //assert(col >= 0 && col < m_Cols && "Column must be in bounds");
-
+ 
     return row * m_Cols + col;
 }
 

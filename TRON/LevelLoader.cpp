@@ -72,7 +72,7 @@ std::unique_ptr<Level> JSONLevelLoader::LoadVS(const std::string& filePath, dae:
 				auto& selectedCollisionTile = tiles[tileSearch];
 
 
-				// Is the tile we're currently on the collision tile?
+				// is the tile we're currently on the collision tile?
 				if (selectedCollisionTile["y"] == column && selectedCollisionTile["x"] == row)
 				{
 					// we found our collision tile and make an object for it!

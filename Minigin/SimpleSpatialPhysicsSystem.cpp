@@ -155,7 +155,8 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 			bool hitDetected = false;
 			Engine::SweepResult bestResult;
 			PhysicsComponent* hitComponent = nullptr;
-
+			
+			// Sweep only static?
 			// sweep to all static colliders, finding the shortest path to collision if one exists
 			for (auto& other : m_pPhysicsAgents)
 			{
@@ -172,7 +173,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 				}
 			}
 
-			// no hit detected, we can keep going
+
 			if (!hitDetected)
 			{
 			
@@ -180,7 +181,7 @@ void SimpleSpatialPhysicsSystem::PhysicsUpdate(float fixedTime)
 			}
 			else
 			{
-				// hit was detected, lets make sure we block movement
+
 				glm::vec2 safeMove = velocity * bestResult.time;
 				constexpr float safeMargin = 0.001f;
 				glm::vec2 safePos = glm::vec2(rect.x, rect.y) + safeMove - bestResult.normal * safeMargin;

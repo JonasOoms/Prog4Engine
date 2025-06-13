@@ -13,8 +13,11 @@ public:
 	// Inherited via SoundSystem
 	void Play(const sound_id id, const float volume) override;
 	sound_id RegisterAudio(const std::string& filePath) override;
+	bool GetIsMuted() override;
+	void Mute(bool isMuted) override;
 private:
 	class impl; 
 	std::unique_ptr<impl> m_pImpl;
+
 };
 

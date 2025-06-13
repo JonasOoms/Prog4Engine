@@ -37,6 +37,25 @@ public:
 		Mix_CloseAudio();
 	}
 
+	void Mute(bool isMuted)
+	{
+		m_isMuted = isMuted;
+		if (isMuted)
+		{
+			Mix_Volume(-1, 0);
+		}
+		else
+		{
+			Mix_Volume(-1, static_cast<int>(m_LastPlayingVolume));
+		}
+		std::cout << m_isMuted << std::endl;
+	}
+
+	bool GetIsMuted()
+	{
+		return m_isMuted;
+	}
+
 	/// <summary>
 	/// Registers an audio into the internal audio system. Returns the integer
 	/// audio id that can be used to play the audio.
@@ -135,11 +154,11 @@ private:
 		}
 
 	private:
-		std::string m_Path;
-		bool m_isLoaded;
+		bool m_isLoaded{};
 		float m_Volume;
-		std::mutex m_Mutex;
 		Mix_Chunk* m_pChunk;
+		std::mutex m_Mutex;
+		std::string m_Path;
 	};
 
 	class SoundQueue
@@ -198,11 +217,19 @@ private:
 			{
 				audioclip->Load();
 			}
-			audioclip->SetVolume(request.volume);
+
+			if (!m_isMuted)
+			{
+				audioclip->SetVolume(request.volume);
+			}
+			m_LastPlayingVolume = request.volume;
 			audioclip->Play();
+			
 		}
 	}
 
+	float m_LastPlayingVolume{};
+	bool m_isMuted{ false };
 	std::jthread m_AudioThread;
 	bool m_isStopRequested = false;
 	std::mutex m_AudioThreadMutex;
@@ -222,6 +249,16 @@ SDL_SoundSystem::SDL_SoundSystem():
 sound_id SDL_SoundSystem::RegisterAudio(const std::string& filePath)
 {
 	return m_pImpl->RegisterAudio(filePath);
+}
+
+void SDL_SoundSystem::Mute(bool isMuted)
+{
+	m_pImpl->Mute(isMuted);
+}
+
+bool SDL_SoundSystem::GetIsMuted()
+{
+	return m_pImpl->GetIsMuted();
 }
 
 void SDL_SoundSystem::Play(const sound_id id, const float volume)

@@ -209,6 +209,7 @@ void TRONGame::LoadScoreScreen()
 	inputMappingKeyboard->AddInputBinding(SDLK_RIGHT, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Right));
 	inputMappingKeyboard->AddInputBinding(SDLK_UP, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Up));
 	inputMappingKeyboard->AddInputBinding(SDLK_DOWN, TriggerType::Released, std::make_unique<ScoreManagerCommand>(scoreManager, ScoreManagerAction::Down));
+	inputMappingKeyboard->AddInputBinding(SDLK_F2, TriggerType::Released, std::make_unique<MuteSoundSystemCommand>());
 	inputManager.GetPlayerController(-1)->AddMapping(std::move(inputMappingKeyboard));
 
 	auto inputMappingController = std::make_unique<InputMapping>();
@@ -246,8 +247,7 @@ void TRONGame::Load()
 		LoadMainMenu();
 
 		dae::SceneManager::GetInstance().SelectScene("Menu");
-		//dae::SceneManager::GetInstance().SelectScene("Level");
-	
+
 		
 
 }
@@ -259,6 +259,6 @@ std::string_view TRONGame::GetGameTitle()
 
 void TRONGame::ChangeGameMode(GameMode gamemode)
 {
-	//assert(!m_IsInLevel && "You cannot change gamemode inside of the level!");
+	
 	m_SelectedGameMode = gamemode;
 }
