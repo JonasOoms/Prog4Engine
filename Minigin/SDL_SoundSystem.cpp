@@ -39,6 +39,7 @@ public:
 
 	void Mute(bool isMuted)
 	{
+		std::lock_guard lock(m_AudioThreadMutex);
 		m_isMuted = isMuted;
 		if (isMuted)
 		{
@@ -46,13 +47,13 @@ public:
 		}
 		else
 		{
-			Mix_Volume(-1, static_cast<int>(m_LastPlayingVolume));
+			Mix_Volume(-1, MIX_MAX_VOLUME);
 		}
-		std::cout << m_isMuted << std::endl;
 	}
 
 	bool GetIsMuted()
 	{
+		std::lock_guard lock(m_AudioThreadMutex);
 		return m_isMuted;
 	}
 

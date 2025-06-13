@@ -30,7 +30,7 @@ void PlayerShootCommand::Execute()
 		{
 			if (TRONGameObjects::PrefabFactory{}.CreateProjectile(m_Scene, m_Component->GetOwner()->GetParent(), velocity * m_Speed))
 			{
-				ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 5.f);
+				ServiceLocator::GetSoundSystem()->Play(TRONRegistries::GameSoundRegistry.Get("SFX1"), 10.f);
 			}
 		}
 			

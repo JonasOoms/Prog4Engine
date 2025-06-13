@@ -210,7 +210,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
     <ClInclude Include="..\3rdParty\implot-0.16\implot.h" />
     <ClInclude Include="..\TRON\Registry.h" />
     <ClInclude Include="BenchmarkPhysicsSystem.h" />
-    <ClInclude Include="BulletRenderComponent.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineStructs.h" />
@@ -257,7 +256,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath)" /R 
     <ClCompile Include="..\3rdParty\implot-0.16\implot.cpp" />
     <ClCompile Include="..\3rdParty\implot-0.16\implot_items.cpp" />
     <ClCompile Include="BenchmarkPhysicsSystem.cpp" />
-    <ClCompile Include="BulletRenderComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Font.cpp" />
