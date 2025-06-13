@@ -399,3 +399,15 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# ────────────────────────────────────────────────────
+# Force-include everything in Data/ (and data/, if you use lowercase)
+# ────────────────────────────────────────────────────
+
+# 1) Make sure Git will descend into the folder
+!Data/
+# 2) Re-include all files and subdirectories under it
+!Data/**
+
+# If you also have a lowercase folder…
+!data/
+!data/**
